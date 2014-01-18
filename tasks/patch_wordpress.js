@@ -13,11 +13,18 @@ var request = require('request')
     , inquirer = require("inquirer")
     , url = require('url')
     , fs = require('fs')
+	, _ = require('underscore')
 
+_.str = _.str = require('underscore.string')
+_.mixin( _.str.exports() )
     
 
 module.exports = function(grunt) {
     var temp_file = 'wppatch.diff'
+
+    function is_svn(){
+        return fs.existsSync('.svn');
+    }
 
     function apply_patch( patch_url , done ){
         grunt.verbose.write( patch_url )
@@ -37,7 +44,7 @@ module.exports = function(grunt) {
             if (typeof msg === 'string')
                 grunt.log.errorlns(msg)
 
-            done(1)
+            done(false)
         })
 
 
@@ -54,7 +61,7 @@ module.exports = function(grunt) {
         else if ( parsed_url.hostname === null && ! parsed_url.pathname.match(/\./) )
             get_patch_from_ticket_number(patch_url)
         // if patch_url is a local file, just use that 
-        else if ( parseUrl.hostname === null )
+        else if ( parsed_url.hostname === null )
             get_local_patch(patch_url)
         // We've failed in our mission
         else
@@ -97,15 +104,50 @@ module.exports = function(grunt) {
         })
     }
 
+    function file_fail(done){
+        grunt.log.errorlns('To use this command without entering a ticket number, ticket url or patch,')
+        grunt.log.errorlns('Please have a diff or patch in your WordPress Directory')
+        done(false)
+    }
+
 
     grunt.registerTask('patch_wordpress', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
         var done = this.async()
 
+        // since URLs contain a : which is the seperator for grunt, we need to reassemble the url.
         if (typeof afterProtocal !== 'undefined')
             ticket = ticket + ':' + afterProtocal
 
         if (typeof ticket === 'undefined'){
             // look for diffs and patches in the root of the checkout and prompt using inquirer to pick one 
+            var fileFinderCommand = is_svn() ? "svn status " : 'git ls-files --other --exclude-standard'
+                , files
+            exec(fileFinderCommand , function(error, result, code) {
+                if (! error){
+					files = _.filter( result.split("\n") , function(file){
+						return ( _.str.include(file, 'patch') || _.str.include( file, 'diff') ) 
+					})
+                    if (files.length === 0) {
+                        file_fail( done )
+                    } else if (files.length === 1) {
+                        apply_patch( files[0] , done )
+                    } else {
+                        inquirer.prompt([
+                            { type: 'list',
+                              name: 'file',
+                              message: 'Please select a file to apply',
+                              choices: files
+                            }
+                        ], function (answers ) {
+							var file = answers.file.replace('?', '').replace(/\s/g, '')
+                            apply_patch( file , done )
+                        })
+                    }
+                } else {
+                    file_fail( done )
+                }
+            });
+
 
         } else {
             apply_patch( ticket , done )
