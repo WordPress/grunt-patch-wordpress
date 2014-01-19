@@ -98,19 +98,36 @@ module.exports = function(grunt) {
     function get_patch_from_ticket( patch_url, options ){
 		var matches
 			, match_url
+			, possible_patches
 
 		grunt.log.debug( 'get_patch_from_ticket: ' + patch_url )	
 		request( patch_url, function(error, response, body) {
             if ( !error && response.statusCode == 200 ) {
 				matches = body.match( /<dt>\s*<a\s+href="([^"]+)"\s+title="View attachment">([^<]+)/g )
-				if (matches == null) {
-                    grunt.event.emit('fileFail', patch_url + '\ncontains no attachments')
-				} else if (matches.length = 1){
-					match_url = options.tracUrl + /href="([^"]+)"/.exec( matches[0] )[0].replace('href="', '').replace('"', '') 
-					get_patch( convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
-				}
 
 				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) )
+
+				if (matches == null) {
+                    grunt.event.emit('fileFail', patch_url + '\ncontains no attachments')
+				} else if (matches.length === 1){
+					match_url = options.tracUrl + matches[0].match( /href="([^"]+)"/ )[1]
+					get_patch( convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
+				} else {
+					possible_patches = _.map( matches, function( match ) { 
+						return _.trim( _(match).stripTags() )
+					})
+					inquirer.prompt([
+						{	type: 'list',
+							name: 'patch_name',
+							message: 'Please select a patch to apply',
+							choices: possible_patches
+						}
+					], function ( answers ) {
+						match_url = options.tracUrl + matches[ _.indexOf( possible_patches, answers.patch_name) ].match(  /href="([^"]+)"/ )[1] 
+						get_patch( convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
+
+					})
+				}
             } else {
                 // something went wrong
                     grunt.event.emit('fileFail', 'get_patch_from_ticket fail \n status: ' + response.statusCode )
