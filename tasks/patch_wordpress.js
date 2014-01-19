@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 
     function apply_patch( patch_url , done ){
         grunt.verbose.write( patch_url )
-        parsed_url = url.parse(patch_url)
+        parsed_url = url.parse( patch_url )
 
         // What to do when either our patch is ready
         grunt.event.once('fileReady', function(level){
@@ -161,6 +161,7 @@ module.exports = function(grunt) {
             // look for diffs and patches in the root of the checkout and prompt using inquirer to pick one 
             var fileFinderCommand = is_svn() ? "svn status " : 'git ls-files --other --exclude-standard'
                 , files
+
             exec(fileFinderCommand , function(error, result, code) {
 					local_file( error, result, code, done)
             });
