@@ -104,10 +104,19 @@ module.exports = function(grunt) {
         })
     }
 
-    function file_fail(done){
-        grunt.log.errorlns('To use this command without entering a ticket number, ticket url or patch,')
-        grunt.log.errorlns('Please have a diff or patch in your WordPress Directory')
-        done(false)
+    function file_fail( done, msg ) {
+		grunt.log.errorlns( 'Nothing to patch.' )
+		grunt.log.errorlns( 'To use this command, please:' )
+		grunt.log.errorlns( '1) have a diff or patch in your WordPress Directory' )
+		grunt.log.errorlns( '2) enter a ticket number ala grunt patch:15705' )
+		grunt.log.errorlns( '3) enter a ticket url ala grunt patch:https://core.trac.wordpress.org/ticket/15705' )
+		grunt.log.errorlns( '4) enter a patch url ala grunt patch:https://core.trac.wordpress.org/attachment/ticket/26870/26870-media-views.diff' )
+
+		if ( typeof( msg ) === 'string' ) {
+			grunt.verbose.errorlns( 'msg: ' + msg )
+		}
+
+        done( false )
     }
 
 
