@@ -130,7 +130,7 @@ module.exports = function(grunt) {
 				}
             } else {
                 // something went wrong
-                    grunt.event.emit('fileFail', 'get_patch_from_ticket fail \n status: ' + response.statusCode )
+                    grunt.event.emit( 'fileFail', 'get_patch_from_ticket fail \n status: ' + response.statusCode )
             }
 		})
 
