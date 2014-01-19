@@ -119,6 +119,33 @@ module.exports = function(grunt) {
         done( false )
     }
 
+	function local_file( error, result, code, done ) {
+		if ( ! error ){
+			files = _.filter( result.split( "\n" ) , function( file ) {
+				return ( _.str.include( file, 'patch' ) || _.str.include( file, 'diff') ) 
+			})
+
+			if ( files.length === 0 ) {
+				file_fail( done )
+			} else if ( files.length === 1 ) {
+				apply_patch( files[0] , done )
+			} else {
+				inquirer.prompt([
+					{ type: 'list',
+					  name: 'file',
+					  message: 'Please select a file to apply',
+					  choices: files
+					}
+				], function ( answers ) {
+					var file = answers.file.replace( '?', '' ).replace( /\s/g, '' )
+					apply_patch( file , done )
+				})
+			}
+		} else {
+			file_fail( done , 'local file fail' )
+		}
+	}
+
 
     grunt.registerTask('patch_wordpress', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
         var done = this.async()
@@ -127,37 +154,14 @@ module.exports = function(grunt) {
         if (typeof afterProtocal !== 'undefined')
             ticket = ticket + ':' + afterProtocal
 
+
         if (typeof ticket === 'undefined'){
             // look for diffs and patches in the root of the checkout and prompt using inquirer to pick one 
             var fileFinderCommand = is_svn() ? "svn status " : 'git ls-files --other --exclude-standard'
                 , files
             exec(fileFinderCommand , function(error, result, code) {
-                if (! error){
-					files = _.filter( result.split("\n") , function(file){
-						return ( _.str.include(file, 'patch') || _.str.include( file, 'diff') ) 
-					})
-                    if (files.length === 0) {
-                        file_fail( done )
-                    } else if (files.length === 1) {
-                        apply_patch( files[0] , done )
-                    } else {
-                        inquirer.prompt([
-                            { type: 'list',
-                              name: 'file',
-                              message: 'Please select a file to apply',
-                              choices: files
-                            }
-                        ], function (answers ) {
-							var file = answers.file.replace('?', '').replace(/\s/g, '')
-                            apply_patch( file , done )
-                        })
-                    }
-                } else {
-                    file_fail( done )
-                }
+					local_file( error, result, code, done)
             });
-
-
         } else {
             apply_patch( ticket , done )
 
