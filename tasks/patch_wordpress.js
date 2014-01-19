@@ -134,7 +134,7 @@ module.exports = function(grunt) {
                 grunt.event.emit('fileReady', level)
             } else {
                 // something went wrong
-                    grunt.event.emit('fileFail')
+                    grunt.event.emit('fileFail', 'get_patch_fail \n status: ' + response.statusCode )
             }
         })
     }
@@ -190,6 +190,7 @@ module.exports = function(grunt) {
             ticket = ticket + ':' + afterProtocal
 		}
 
+        grunt.log.debug( 'ticket: ' + ticket )
 
         if (typeof ticket === 'undefined'){
             // look for diffs and patches in the root of the checkout and prompt using inquirer to pick one 
