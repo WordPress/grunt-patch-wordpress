@@ -41,32 +41,33 @@ module.exports = function(grunt) {
 
         // or we know we have failed
         grunt.event.once('fileFail', function(msg){
-            if (typeof msg === 'string')
+            if (typeof msg === 'string') {
                 grunt.log.errorlns(msg)
+			}
 
             done(false)
         })
 
 
         // if patch_url is a full url and is a raw-attachement, just apply it 
-        if( parsed_url.hostname === 'core.trac.wordpress.org' && parsed_url.pathname.match(/raw-attachment/) )
+        if( parsed_url.hostname === 'core.trac.wordpress.org' && parsed_url.pathname.match(/raw-attachment/) ) {
             get_patch( patch_url )
+		} else if ( parsed_url.hostname === 'core.trac.wordpress.org' && parsed_url.pathname.match(/attachment/) ) {
         // if patch_url is full url and is a attachment, convert it to a raw attachment
-        else if ( parsed_url.hostname === 'core.trac.wordpress.org' && parsed_url.pathname.match(/attachment/) )
             get_patch( convert_to_raw ( parsed_url ) )
         // if patch_url is just a ticket number, get a list of patches on that ticket and allow user to choose one
-        else if (  parsed_url.hostname === 'core.trac.wordpress.org' && parsed_url.pathname.match(/ticket/) ) 
+        } else if (  parsed_url.hostname === 'core.trac.wordpress.org' && parsed_url.pathname.match(/ticket/) ) { 
             get_patch_from_ticket(patch_url)
         // if we just enter a number, assume it is a ticket number
-        else if ( parsed_url.hostname === null && ! parsed_url.pathname.match(/\./) )
+        } else if ( parsed_url.hostname === null && ! parsed_url.pathname.match(/\./) ) {
             get_patch_from_ticket_number(patch_url)
         // if patch_url is a local file, just use that 
-        else if ( parsed_url.hostname === null )
+        } else if ( parsed_url.hostname === null ) {
             get_local_patch(patch_url)
         // We've failed in our mission
-        else
+        } else {
             grunt.event.emit('fileFile', 'All matching failed.  Please enter a ticket url, ticket number, patch url')
-
+		}
     }
 
     function convert_to_raw( parsed_url ){
@@ -131,10 +132,10 @@ module.exports = function(grunt) {
 				apply_patch( files[0] , done )
 			} else {
 				inquirer.prompt([
-					{ type: 'list',
-					  name: 'file',
-					  message: 'Please select a file to apply',
-					  choices: files
+					{	type: 'list',
+						name: 'file',
+						message: 'Please select a file to apply',
+						choices: files
 					}
 				], function ( answers ) {
 					var file = answers.file.replace( '?', '' ).replace( /\s/g, '' )
@@ -151,8 +152,9 @@ module.exports = function(grunt) {
         var done = this.async()
 
         // since URLs contain a : which is the seperator for grunt, we need to reassemble the url.
-        if (typeof afterProtocal !== 'undefined')
+        if (typeof afterProtocal !== 'undefined') {
             ticket = ticket + ':' + afterProtocal
+		}
 
 
         if (typeof ticket === 'undefined'){
