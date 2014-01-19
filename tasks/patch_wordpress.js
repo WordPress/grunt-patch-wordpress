@@ -32,12 +32,21 @@ module.exports = function(grunt) {
 
         // What to do when either our patch is ready
         grunt.event.once('fileReady', function(level){
-               exec('patch -p' + level + ' < ' + temp_file, function(error, result, code) {
-                    grunt.file.delete(temp_file);
-                    grunt.verbose.write(error, result, code)
-                    done(0)
-                })
-        })
+               exec('patch -p' + level + ' < '  + temp_file, function(error, result, code) {
+                    grunt.log.debug( 'level: '  + level  )
+					grunt.log.debug( 'error: '  + error  )
+					grunt.log.debug( 'result: ' + result )
+					grunt.log.debug( 'code: '   + code )
+
+					if ( error ) {
+						grunt.log.errorlns( result )
+						done( 1 )
+					} else {
+						grunt.file.delete(temp_file);
+						done(0)
+					}
+                }) 
+		})
 
         // or we know we have failed
         grunt.event.once('fileFail', function(msg){
