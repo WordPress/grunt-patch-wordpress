@@ -6,7 +6,7 @@
     "eqnull"   : true,
     "debug"    : true,
     "devel"    : true,
-    "curly"    : false,
+    "curly"    : true,
     "boss"     : true,
     "expr"     : true,
     "node"     : true,
