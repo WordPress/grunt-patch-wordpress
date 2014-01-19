@@ -21,12 +21,16 @@ _.mixin( _.str.exports() )
 
 module.exports = function(grunt) {
     var temp_file = 'wppatch.diff'
+		, defaults = {
+			tracUrl : 'core.trac.wordpress.org'
+		}
+	
 
     function is_svn(){
-        return fs.existsSync('.svn');
+        return fs.existsSync('.svn')
     }
 
-    function apply_patch( patch_url , done ){
+    function apply_patch( patch_url , done , options ){
         grunt.verbose.write( patch_url )
         parsed_url = url.parse( patch_url )
 
@@ -42,7 +46,7 @@ module.exports = function(grunt) {
 						grunt.log.errorlns( result )
 						done( 1 )
 					} else {
-						grunt.file.delete(temp_file);
+						grunt.file.delete(temp_file)
 						done(0)
 					}
                 }) 
@@ -59,28 +63,30 @@ module.exports = function(grunt) {
 
 
         // if patch_url is a full url and is a raw-attachement, just apply it 
-        if( parsed_url.hostname === 'core.trac.wordpress.org' && parsed_url.pathname.match(/raw-attachment/) ) {
-            get_patch( patch_url )
-		} else if ( parsed_url.hostname === 'core.trac.wordpress.org' && parsed_url.pathname.match(/attachment/) ) {
-        // if patch_url is full url and is a attachment, convert it to a raw attachment
-            get_patch( convert_to_raw ( parsed_url ) )
+        if( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/raw-attachment/) ) {
+            get_patch( patch_url, options )
+        // if patch_url is full url and is an attachment, convert it to a raw attachment
+		} else if ( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/attachment/) && parsed_url.pathname.match(/(patch|diff)/ ) ) {
+            get_patch( convert_to_raw ( parsed_url, options ) )
         // if patch_url is just a ticket number, get a list of patches on that ticket and allow user to choose one
-        } else if (  parsed_url.hostname === 'core.trac.wordpress.org' && parsed_url.pathname.match(/ticket/) ) { 
-            get_patch_from_ticket(patch_url)
+        } else if (  parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/ticket/) ) { 
+            get_patch_from_ticket( patch_url, options )
         // if we just enter a number, assume it is a ticket number
         } else if ( parsed_url.hostname === null && ! parsed_url.pathname.match(/\./) ) {
-            get_patch_from_ticket_number(patch_url)
+            get_patch_from_ticket_number( patch_url, options )
         // if patch_url is a local file, just use that 
         } else if ( parsed_url.hostname === null ) {
-            get_local_patch(patch_url)
+            get_local_patch( patch_url, options )
         // We've failed in our mission
         } else {
             grunt.event.emit('fileFile', 'All matching failed.  Please enter a ticket url, ticket number, patch url')
 		}
     }
 
-    function convert_to_raw( parsed_url ){
+    function convert_to_raw( parsed_url, options ){
+		grunt.log.debug( 'convert_to_raw: ' + JSON.stringify(parsed_url ) )	
         parsed_url.pathname = parsed_url.pathname.replace(/attachment/, "raw-attachment")
+		grunt.log.debug( 'converted_from_raw: ' + url.format( parsed_url ) )
         return url.format( parsed_url )
     }
 
@@ -104,7 +110,7 @@ module.exports = function(grunt) {
 	function level_calculator( diff ){
 		var level = 0
 		try {
-			diff = diff.split( '\n' );
+			diff = diff.split( '\n' )
 			_.each( diff, function( line ) {
 				if ( _.startsWith( line, 'diff --git a/' ) ) {
 					throw 1
@@ -126,6 +132,7 @@ module.exports = function(grunt) {
 	}
 
     function get_patch( patch_url ){
+		grunt.log.debug( 'getting patch: ' + patch_url )
         request(patch_url, function(error, response, body) {
             if (!error && response.statusCode == 200) {
                 var level = level_calculator( body )
@@ -154,7 +161,7 @@ module.exports = function(grunt) {
         done( false )
     }
 
-	function local_file( error, result, code, done ) {
+	function local_file( error, result, code, done, options ) {
 		if ( ! error ){
 			files = _.filter( result.split( "\n" ) , function( file ) {
 				return ( _.str.include( file, 'patch' ) || _.str.include( file, 'diff') ) 
@@ -163,7 +170,7 @@ module.exports = function(grunt) {
 			if ( files.length === 0 ) {
 				file_fail( done )
 			} else if ( files.length === 1 ) {
-				apply_patch( files[0] , done )
+				apply_patch( files[0] , done, options )
 			} else {
 				inquirer.prompt([
 					{	type: 'list',
@@ -173,7 +180,7 @@ module.exports = function(grunt) {
 					}
 				], function ( answers ) {
 					var file = answers.file.replace( '?', '' ).replace( /\s/g, '' )
-					apply_patch( file , done )
+					apply_patch( file , done, options )
 				})
 			}
 		} else {
@@ -184,24 +191,29 @@ module.exports = function(grunt) {
 
     grunt.registerTask( 'patch', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
         var done = this.async()
+		var options = this.options(defaults)
 
-        // since URLs contain a : which is the seperator for grunt, we need to reassemble the url.
+        // since URLs contain a : which is the seperator for grunt, we 
+		// need to reassemble the url.
         if (typeof afterProtocal !== 'undefined') {
             ticket = ticket + ':' + afterProtocal
 		}
 
         grunt.log.debug( 'ticket: ' + ticket )
+		grunt.log.debug( 'options: ' + JSON.stringify( options ) )
 
         if (typeof ticket === 'undefined'){
-            // look for diffs and patches in the root of the checkout and prompt using inquirer to pick one 
+            // look for diffs and patches in the root of the checkout and 
+			// prompt using inquirer to pick one 
+
             var fileFinderCommand = is_svn() ? "svn status " : 'git ls-files --other --exclude-standard'
                 , files
 
             exec(fileFinderCommand , function(error, result, code) {
-					local_file( error, result, code, done)
-            });
+				local_file( error, result, code, done, options)
+            })
         } else {
-            apply_patch( ticket , done )
+            apply_patch( ticket , done, options )
 
         }
 
