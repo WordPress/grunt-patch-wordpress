@@ -182,7 +182,7 @@ module.exports = function(grunt) {
 	}
 
 
-    grunt.registerTask('patch_wordpress', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
+    grunt.registerTask( 'patch', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
         var done = this.async()
 
         // since URLs contain a : which is the seperator for grunt, we need to reassemble the url.
