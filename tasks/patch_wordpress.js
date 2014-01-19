@@ -134,13 +134,6 @@ module.exports = function(grunt) {
             }
 		})
 
-		// find out how many patches are on the ticket
-
-		// if one, get it and apply it 
-
-		// if more than one, give some options
-
-
 		grunt.event.emit('fileFile', 'method not available yet')
     }
 
