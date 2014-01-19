@@ -90,13 +90,41 @@ module.exports = function(grunt) {
         return url.format( parsed_url )
     }
 
-    function get_patch_from_ticket_number( patch_url ){
-            grunt.event.emit('fileFile', 'method not available yet')
-
+    function get_patch_from_ticket_number( patch_url, options  ){
+		grunt.log.debug( 'get_patch_from_ticket_number: ' + patch_url )	
+		get_patch_from_ticket( 'https://' + options.tracUrl + '/attachment/ticket/' + patch_url + '/', options  )
     }
 
-    function get_patch_from_ticket( patch_url ){
-            grunt.event.emit('fileFile', 'method not available yet')
+    function get_patch_from_ticket( patch_url, options ){
+		var matches
+			, match_url
+
+		grunt.log.debug( 'get_patch_from_ticket: ' + patch_url )	
+		request( patch_url, function(error, response, body) {
+            if ( !error && response.statusCode == 200 ) {
+				matches = body.match( /<dt>\s*<a\s+href="([^"]+)"\s+title="View attachment">([^<]+)/g )
+				if (matches == null) {
+                    grunt.event.emit('fileFail', patch_url + '\ncontains no attachments')
+				} else if (matches.length = 1){
+					match_url = options.tracUrl + /href="([^"]+)"/.exec( matches[0] )[0].replace('href="', '').replace('"', '') 
+					get_patch( convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
+				}
+
+				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) )
+            } else {
+                // something went wrong
+                    grunt.event.emit('fileFail', 'get_patch_from_ticket fail \n status: ' + response.statusCode )
+            }
+		})
+
+		// find out how many patches are on the ticket
+
+		// if one, get it and apply it 
+
+		// if more than one, give some options
+
+
+		grunt.event.emit('fileFile', 'method not available yet')
     }
 
     function get_local_patch(patch_url) {
