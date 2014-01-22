@@ -1,7 +1,7 @@
 'use strict';
 
 var grunt = require( 'grunt' )
-	, patch = require( '../tasks/patch_wordpress.js' )
+	, patch = require( '../lib/patch.js' )
     , url = require( 'url' )
 	, expect = require( 'chai' ).expect
 	, trac = require( '../lib/trac.js' )
@@ -21,6 +21,12 @@ describe('grunt_patch_wordpress', function () {
 	})
 
 	describe( 'Level Calculator' , function() {
-		// @TODO: Find patches to use here
+		// @TODO: Find alot of patches to use here
+
+		it ( '26602.2.diff is 1', function(done) {
+			var file = grunt.file.read( 'test/fixtures/26602.2.diff')
+			expect( patch.level_calculator( file ) ).to.equal( 1 )
+			done()
+		})
 	})
 })
