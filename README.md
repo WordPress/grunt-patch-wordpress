@@ -1,7 +1,10 @@
 # grunt-patch-wordpress
 
+
+
 # This is a work in progress.  It's still early in the dev cycle
 
+[![Build Status](https://travis-ci.org/aaronjorbin/grunt-patch-wordpress.png?branch=master)](https://travis-ci.org/aaronjorbin/grunt-patch-wordpress)
 
 > Patch your develop-wordpress directory like a boss
 
