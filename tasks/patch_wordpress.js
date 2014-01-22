@@ -8,12 +8,15 @@
  * Licensed under the MIT license.
  */
 
-var request = require('request')
-    , exec =  require('child_process').exec
-    , inquirer = require("inquirer")
-    , url = require('url')
-    , fs = require('fs')
-	, _ = require('underscore')
+var request = require( 'request' )
+    , exec =  require( 'child_process' ).exec
+    , inquirer = require( 'inquirer' )
+    , url = require( 'url' )
+    , fs = require( 'fs' )
+	, _ = require( 'underscore' )
+	, trac = require( '../lib/trac.js' ) 
+	, patch = require( '../lib/patch.js' ) 
+
 
 _.str = _.str = require('underscore.string')
 _.mixin( _.str.exports() )
@@ -65,30 +68,29 @@ module.exports = function(grunt) {
         // if patch_url is a full url and is a raw-attachement, just apply it 
         if( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/raw-attachment/) ) {
             get_patch( patch_url, options )
+
         // if patch_url is full url and is an attachment, convert it to a raw attachment
 		} else if ( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/attachment/) && parsed_url.pathname.match(/(patch|diff)/ ) ) {
-            get_patch( convert_to_raw ( parsed_url, options ) )
+            get_patch( trac.convert_to_raw ( parsed_url, options ) )
+
         // if patch_url is just a ticket number, get a list of patches on that ticket and allow user to choose one
         } else if (  parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/ticket/) ) { 
             get_patch_from_ticket( patch_url, options )
+
         // if we just enter a number, assume it is a ticket number
         } else if ( parsed_url.hostname === null && ! parsed_url.pathname.match(/\./) ) {
             get_patch_from_ticket_number( patch_url, options )
+
         // if patch_url is a local file, just use that 
         } else if ( parsed_url.hostname === null ) {
             get_local_patch( patch_url, options )
+
         // We've failed in our mission
         } else {
             grunt.event.emit('fileFile', 'All matching failed.  Please enter a ticket url, ticket number, patch url')
 		}
     }
 
-    function convert_to_raw( parsed_url, options ){
-		grunt.log.debug( 'convert_to_raw: ' + JSON.stringify(parsed_url ) )	
-        parsed_url.pathname = parsed_url.pathname.replace(/attachment/, "raw-attachment")
-		grunt.log.debug( 'converted_from_raw: ' + url.format( parsed_url ) )
-        return url.format( parsed_url )
-    }
 
     function get_patch_from_ticket_number( patch_url, options  ){
 		grunt.log.debug( 'get_patch_from_ticket_number: ' + patch_url )	
@@ -111,7 +113,7 @@ module.exports = function(grunt) {
                     grunt.event.emit('fileFail', patch_url + '\ncontains no attachments')
 				} else if (matches.length === 1){
 					match_url = options.tracUrl + matches[0].match( /href="([^"]+)"/ )[1]
-					get_patch( convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
+					get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 				} else {
 					possible_patches = _.map( matches, function( match ) { 
 						return _.trim( _(match).stripTags() )
@@ -124,7 +126,7 @@ module.exports = function(grunt) {
 						}
 					], function ( answers ) {
 						match_url = options.tracUrl + matches[ _.indexOf( possible_patches, answers.patch_name) ].match(  /href="([^"]+)"/ )[1] 
-						get_patch( convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
+						get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 
 					})
 				}
