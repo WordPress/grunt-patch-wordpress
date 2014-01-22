@@ -141,41 +141,17 @@ module.exports = function(grunt) {
 
     function get_local_patch(patch_url) {
         var body = grunt.file.read(patch_url)
-            , level = level_calculator( body )
+            , level = patch.level_calculator( body )
 
         grunt.file.copy(patch_url, temp_file)
         grunt.event.emit('fileReady', level)
     }
 
-	function level_calculator( diff ){
-		var level = 0
-		try {
-			diff = diff.split( '\n' )
-			_.each( diff, function( line ) {
-				if ( _.startsWith( line, 'diff --git a/' ) ) {
-					throw 1
-				}
-				if ( _.startsWith( line, 'Index: src/' ) ) {
-					throw 1
-				}
-				if ( _.startsWith( line, '+++ src/' ) ) {
-					throw 1
-				}
-
-			})
-			throw 0
-		} catch( l ) {
-			level = l	
-		}
-
-		return level
-	}
-
     function get_patch( patch_url ){
 		grunt.log.debug( 'getting patch: ' + patch_url )
         request(patch_url, function(error, response, body) {
             if (!error && response.statusCode == 200) {
-                var level = level_calculator( body )
+                var level = patch.level_calculator( body )
 
                 grunt.file.write( temp_file, body)
                 grunt.event.emit('fileReady', level)
