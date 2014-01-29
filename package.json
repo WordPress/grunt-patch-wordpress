@@ -1,8 +1,8 @@
 {
-  "name": "grunt-patch-wordpress",
-  "description": "Patch your develop-wordpress directory like a boss",
+  "name": "grunt-patch",
+  "description": "Patch your trac based project",
   "version": "0.1.0",
-  "homepage": "https://github.com/aaronjorbin/grunt-patch-wordpress",
+  "homepage": "https://github.com/aaronjorbin/grunt-patch",
   "author": {
     "name": "Aaron Jorbin",
     "email": "aaron@jorb.in",
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/aaronjorbin/grunt-patch-wordpress.git"
+    "url": "git://github.com/aaronjorbin/grunt-patch.git"
   },
   "bugs": {
-    "url": "https://github.com/aaronjorbin/grunt-patch-wordpress/issues"
+    "url": "https://github.com/aaronjorbin/grunt-patch/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/aaronjorbin/grunt-patch-wordpress/blob/master/LICENSE-MIT"
+      "url": "https://github.com/aaronjorbin/grunt-patch/blob/master/LICENSE-MIT"
     }
   ],
   "main": "Gruntfile.js",
