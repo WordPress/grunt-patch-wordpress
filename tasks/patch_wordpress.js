@@ -117,7 +117,7 @@ module.exports = function(grunt) {
 				} else {
 					long_matches = body.match( /<dt([\s|\S]*?)dt>/g )
 					possible_patches = _.map( long_matches, function( match ) { 
-						return _.trim( _(match).stripTags().replace(/\n/, ' ') )
+						return _.clean( _.trim( _(match).stripTags().replace( /\n/g, ' ' ) ) )
 					})
 					grunt.log.debug( 'possible_patches: ' + JSON.stringify( possible_patches ) )
 					grunt.log.debug( 'long_matches: ' + JSON.stringify( long_matches ) )
