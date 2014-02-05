@@ -99,6 +99,7 @@ module.exports = function(grunt) {
 
     function get_patch_from_ticket( patch_url, options ){
 		var matches
+			, long_matches
 			, match_url
 			, possible_patches
 
@@ -106,7 +107,6 @@ module.exports = function(grunt) {
 		request( patch_url, function(error, response, body) {
             if ( !error && response.statusCode == 200 ) {
 				matches = body.match( /<dt>\s*<a\s+href="([^"]+)"\s+title="View attachment">([^<]+)/g )
-
 				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) )
 
 				if (matches == null) {
@@ -115,9 +115,12 @@ module.exports = function(grunt) {
 					match_url = options.tracUrl + matches[0].match( /href="([^"]+)"/ )[1]
 					get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 				} else {
-					possible_patches = _.map( matches, function( match ) { 
-						return _.trim( _(match).stripTags() )
+					long_matches = body.match( /<dt([\s|\S]*?)dt>/g )
+					possible_patches = _.map( long_matches, function( match ) { 
+						return _.trim( _(match).stripTags().replace(/\n/, ' ') )
 					})
+					grunt.log.debug( 'possible_patches: ' + JSON.stringify( possible_patches ) )
+					grunt.log.debug( 'long_matches: ' + JSON.stringify( long_matches ) )
 					inquirer.prompt([
 						{	type: 'list',
 							name: 'patch_name',
@@ -125,6 +128,7 @@ module.exports = function(grunt) {
 							choices: possible_patches
 						}
 					], function ( answers ) {
+						grunt.log.debug( 'answers:' + JSON.stringify(answers) )
 						match_url = options.tracUrl + matches[ _.indexOf( possible_patches, answers.patch_name) ].match(  /href="([^"]+)"/ )[1] 
 						get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 
