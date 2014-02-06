@@ -23,9 +23,9 @@ describe('grunt_patch_wordpress', function () {
 	describe( 'Level Calculator' , function() {
 		// @TODO: Find alot of patches to use here
 
-		it ( '26602.2.diff is 1', function(done) {
+		it ( '26602.2.diff is 0', function(done) {
 			var file = grunt.file.read( 'test/fixtures/26602.2.diff')
-			expect( patch.level_calculator( file ) ).to.equal( 1 )
+			expect( patch.level_calculator( file ) ).to.equal( 0 )
 			done()
 		})
 	})
