@@ -10,5 +10,6 @@
     "boss"     : true,
     "expr"     : true,
     "node"     : true,
-    "asi"      : true
+    "asi"      : true,
+    "indent"   : 4
 }
