@@ -1,7 +1,7 @@
 /*
  * grunt-patch-wordpress
  * https://github.com/aaronjorbin/grunt-patch-wordpress
- * Based on https://gist.github.com/markjaquith/4219135 
+ * Based on https://gist.github.com/markjaquith/4219135
  *
  *
  * Copyright (c) 2013 Aaron Jorbin
@@ -9,114 +9,113 @@
  */
 
 var request = require( 'request' )
-    , exec =  require( 'child_process' ).exec
-    , inquirer = require( 'inquirer' )
-    , url = require( 'url' )
-    , fs = require( 'fs' )
+	, exec =  require( 'child_process' ).exec
+	, inquirer = require( 'inquirer' )
+	, url = require( 'url' )
+	, fs = require( 'fs' )
 	, _ = require( 'underscore' )
-	, trac = require( '../lib/trac.js' ) 
-	, patch = require( '../lib/patch.js' ) 
+	, trac = require( '../lib/trac.js' )
+	, patch = require( '../lib/patch.js' )
 
 
 _.str = _.str = require('underscore.string')
 _.mixin( _.str.exports() )
-    
+
 
 module.exports = function(grunt) {
-    var temp_file = 'wppatch.diff'
+	var temp_file = 'wppatch.diff'
 		, defaults = {
 			tracUrl : 'core.trac.wordpress.org'
 		}
-	
 
-    function is_svn(){
-        return fs.existsSync('.svn')
-    }
 
-    function apply_patch( patch_url , done , options ){
-        grunt.verbose.write( patch_url )
-        parsed_url = url.parse( patch_url )
+	function is_svn(){
+		return fs.existsSync('.svn')
+	}
 
-        // What to do when either our patch is ready
-        grunt.event.once('fileReady', function(level){
-               exec('patch -p' + level + ' < '  + temp_file, function(error, result, code) {
-                    grunt.log.debug( 'level: '  + level  )
-					grunt.log.debug( 'error: '  + error  )
-					grunt.log.debug( 'result: ' + result )
-					grunt.log.debug( 'code: '   + code )
+	function apply_patch( patch_url , done , options ){
+		grunt.verbose.write( patch_url )
+		parsed_url = url.parse( patch_url )
 
-					if ( error ) {
-						grunt.log.errorlns( result )
-						done( 1 )
-					} else {
-						grunt.file.delete(temp_file)
-						done(0)
-					}
-                }) 
+		// What to do when either our patch is ready
+		grunt.event.once('fileReady', function(level){
+			exec('patch -p' + level + ' < '  + temp_file, function(error, result, code) {
+				grunt.log.debug( 'level: '  + level  )
+				grunt.log.debug( 'error: '  + error  )
+				grunt.log.debug( 'result: ' + result )
+				grunt.log.debug( 'code: '   + code )
+
+				if ( error ) {
+					grunt.log.errorlns( result )
+					done( 1 )
+				} else {
+					grunt.file.delete(temp_file)
+					done(0)
+				}
+			})
 		})
 
-        // or we know we have failed
-        grunt.event.once('fileFail', function(msg){
-            if (typeof msg === 'string') {
-                grunt.log.errorlns(msg)
+		// or we know we have failed
+		grunt.event.once('fileFail', function(msg){
+			if (typeof msg === 'string') {
+				grunt.log.errorlns(msg)
 			}
 
-            done(false)
-        })
+			done(false)
+		})
 
+		// if patch_url is a full url and is a raw-attachement, just apply it
+		if( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/raw-attachment/) ) {
+			get_patch( patch_url, options )
 
-        // if patch_url is a full url and is a raw-attachement, just apply it 
-        if( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/raw-attachment/) ) {
-            get_patch( patch_url, options )
-
-        // if patch_url is full url and is an attachment, convert it to a raw attachment
+		// if patch_url is full url and is an attachment, convert it to a raw attachment
 		} else if ( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/attachment/) && parsed_url.pathname.match(/(patch|diff)/ ) ) {
-            get_patch( trac.convert_to_raw ( parsed_url, options ) )
+			get_patch( trac.convert_to_raw ( parsed_url, options ) )
 
-        // if patch_url is just a ticket number, get a list of patches on that ticket and allow user to choose one
-        } else if (  parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/ticket/) ) { 
-            get_patch_from_ticket( patch_url, options )
+		// if patch_url is just a ticket number, get a list of patches on that ticket and allow user to choose one
+		} else if (  parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/ticket/) ) {
+			get_patch_from_ticket( patch_url, options )
 
-        // if we just enter a number, assume it is a ticket number
-        } else if ( parsed_url.hostname === null && ! parsed_url.pathname.match(/\./) ) {
-            get_patch_from_ticket_number( patch_url, options )
+		// if we just enter a number, assume it is a ticket number
+		} else if ( parsed_url.hostname === null && ! parsed_url.pathname.match(/\./) ) {
+			get_patch_from_ticket_number( patch_url, options )
 
-        // if patch_url is a local file, just use that 
-        } else if ( parsed_url.hostname === null ) {
-            get_local_patch( patch_url, options )
+		// if patch_url is a local file, just use that
+		} else if ( parsed_url.hostname === null ) {
+			get_local_patch( patch_url, options )
 
-        // We've failed in our mission
-        } else {
-            grunt.event.emit('fileFile', 'All matching failed.  Please enter a ticket url, ticket number, patch url')
+		// We've failed in our mission
+		} else {
+			grunt.event.emit('fileFile', 'All matching failed.  Please enter a ticket url, ticket number, patch url')
 		}
-    }
+	}
 
 
-    function get_patch_from_ticket_number( patch_url, options  ){
-		grunt.log.debug( 'get_patch_from_ticket_number: ' + patch_url )	
+	function get_patch_from_ticket_number( patch_url, options  ){
+		grunt.log.debug( 'get_patch_from_ticket_number: ' + patch_url )
 		get_patch_from_ticket( 'https://' + options.tracUrl + '/attachment/ticket/' + patch_url + '/', options  )
-    }
+	}
 
-    function get_patch_from_ticket( patch_url, options ){
+	function get_patch_from_ticket( patch_url, options ){
 		var matches
 			, long_matches
 			, match_url
 			, possible_patches
 
-		grunt.log.debug( 'get_patch_from_ticket: ' + patch_url )	
+		grunt.log.debug( 'get_patch_from_ticket: ' + patch_url )
 		request( patch_url, function(error, response, body) {
-            if ( !error && response.statusCode == 200 ) {
+			if ( !error && response.statusCode == 200 ) {
 				matches = body.match( /<dt>\s*<a\s+href="([^"]+)"\s+title="View attachment">([^<]+)/g )
 				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) )
 
 				if (matches == null) {
-                    grunt.event.emit('fileFail', patch_url + '\ncontains no attachments')
+					grunt.event.emit('fileFail', patch_url + '\ncontains no attachments')
 				} else if (matches.length === 1){
 					match_url = options.tracUrl + matches[0].match( /href="([^"]+)"/ )[1]
 					get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 				} else {
 					long_matches = body.match( /<dt([\s|\S]*?)dt>/g )
-					possible_patches = _.map( long_matches, function( match ) { 
+					possible_patches = _.map( long_matches, function( match ) {
 						return _.clean( _.trim( _(match).stripTags().replace( /\n/g, ' ' ) ) )
 					})
 					grunt.log.debug( 'possible_patches: ' + JSON.stringify( possible_patches ) )
@@ -129,44 +128,44 @@ module.exports = function(grunt) {
 						}
 					], function ( answers ) {
 						grunt.log.debug( 'answers:' + JSON.stringify(answers) )
-						match_url = options.tracUrl + matches[ _.indexOf( possible_patches, answers.patch_name) ].match(  /href="([^"]+)"/ )[1] 
+						match_url = options.tracUrl + matches[ _.indexOf( possible_patches, answers.patch_name) ].match(  /href="([^"]+)"/ )[1]
 						get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 
 					})
 				}
-            } else {
-                // something went wrong
-                    grunt.event.emit( 'fileFail', 'get_patch_from_ticket fail \n status: ' + response.statusCode )
-            }
+			} else {
+				// something went wrong
+				grunt.event.emit( 'fileFail', 'get_patch_from_ticket fail \n status: ' + response.statusCode )
+			}
 		})
 
 		grunt.event.emit('fileFile', 'method not available yet')
-    }
+	}
 
-    function get_local_patch(patch_url) {
-        var body = grunt.file.read(patch_url)
-            , level = patch.level_calculator( body )
+	function get_local_patch(patch_url) {
+		var body = grunt.file.read(patch_url)
+			, level = patch.level_calculator( body )
 
-        grunt.file.copy(patch_url, temp_file)
-        grunt.event.emit('fileReady', level)
-    }
+		grunt.file.copy(patch_url, temp_file)
+		grunt.event.emit('fileReady', level)
+	}
 
-    function get_patch( patch_url ){
+	function get_patch( patch_url ){
 		grunt.log.debug( 'getting patch: ' + patch_url )
-        request(patch_url, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
-                var level = patch.level_calculator( body )
+		request(patch_url, function(error, response, body) {
+			if (!error && response.statusCode == 200) {
+				var level = patch.level_calculator( body )
 
-                grunt.file.write( temp_file, body)
-                grunt.event.emit('fileReady', level)
-            } else {
-                // something went wrong
-                    grunt.event.emit('fileFail', 'get_patch_fail \n status: ' + response.statusCode )
-            }
-        })
-    }
+				grunt.file.write( temp_file, body)
+				grunt.event.emit('fileReady', level)
+			} else {
+				// something went wrong
+				grunt.event.emit('fileFail', 'get_patch_fail \n status: ' + response.statusCode )
+			}
+		})
+	}
 
-    function file_fail( done, msg ) {
+	function file_fail( done, msg ) {
 		grunt.log.errorlns( 'Nothing to patch.' )
 		grunt.log.errorlns( 'To use this command, please:' )
 		grunt.log.errorlns( '1) have a diff or patch in your WordPress Directory' )
@@ -178,13 +177,13 @@ module.exports = function(grunt) {
 			grunt.verbose.errorlns( 'msg: ' + msg )
 		}
 
-        done( false )
-    }
+		done( false )
+	}
 
 	function local_file( error, result, code, done, options ) {
 		if ( ! error ){
 			files = _.filter( result.split( "\n" ) , function( file ) {
-				return ( _.str.include( file, 'patch' ) || _.str.include( file, 'diff') ) 
+				return ( _.str.include( file, 'patch' ) || _.str.include( file, 'diff') )
 			})
 
 			if ( files.length === 0 ) {
@@ -209,34 +208,34 @@ module.exports = function(grunt) {
 	}
 
 
-    grunt.registerTask( 'patch', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
-        var done = this.async()
+	grunt.registerTask( 'patch', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
+		var done = this.async()
 		var options = this.options(defaults)
 
-        // since URLs contain a : which is the seperator for grunt, we 
+		// since URLs contain a : which is the seperator for grunt, we
 		// need to reassemble the url.
-        if (typeof afterProtocal !== 'undefined') {
-            ticket = ticket + ':' + afterProtocal
+		if (typeof afterProtocal !== 'undefined') {
+			ticket = ticket + ':' + afterProtocal
 		}
 
-        grunt.log.debug( 'ticket: ' + ticket )
+		grunt.log.debug( 'ticket: ' + ticket )
 		grunt.log.debug( 'options: ' + JSON.stringify( options ) )
 
-        if (typeof ticket === 'undefined'){
-            // look for diffs and patches in the root of the checkout and 
-			// prompt using inquirer to pick one 
+		if (typeof ticket === 'undefined'){
+			// look for diffs and patches in the root of the checkout and
+			// prompt using inquirer to pick one
 
-            var fileFinderCommand = is_svn() ? "svn status " : 'git ls-files --other --exclude-standard'
-                , files
+			var fileFinderCommand = is_svn() ? "svn status " : 'git ls-files --other --exclude-standard'
+				, files
 
-            exec(fileFinderCommand , function(error, result, code) {
+			exec(fileFinderCommand , function(error, result, code) {
 				local_file( error, result, code, done, options)
-            })
-        } else {
-            apply_patch( ticket , done, options )
+			})
+		} else {
+			apply_patch( ticket , done, options )
 
-        }
+		}
 
-    })
+	})
 
 }
