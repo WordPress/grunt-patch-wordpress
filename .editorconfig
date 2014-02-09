@@ -7,7 +7,7 @@ end_of_line = lf
 trim_trailing_whitespace = true
 
 # Tab indentation for all JS
-[*.js]
+[*.js,*.jshintrc]
 indent_style = tab
 indent_size = 4
 
