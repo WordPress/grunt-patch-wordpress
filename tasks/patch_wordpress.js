@@ -16,6 +16,7 @@ var request = require( 'request' )
 	, _ = require( 'underscore' )
 	, trac = require( '../lib/trac.js' )
 	, patch = require( '../lib/patch.js' )
+	, regex = require( '../lib/regex.js' )
 
 
 _.str = _.str = require('underscore.string')
@@ -105,19 +106,18 @@ module.exports = function(grunt) {
 		grunt.log.debug( 'get_patch_from_ticket: ' + patch_url )
 		request( patch_url, function(error, response, body) {
 			if ( !error && response.statusCode == 200 ) {
-				matches = body.match( /<dt>\s*<a\s+href="([^"]+)"\s+title="View attachment">([^<]+)/g )
+				matches = regex.patch_attachments( body )
 				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) )
 
 				if (matches == null) {
 					grunt.event.emit('fileFail', patch_url + '\ncontains no attachments')
 				} else if (matches.length === 1){
-					match_url = options.tracUrl + matches[0].match( /href="([^"]+)"/ )[1]
+					match_url = options.tracUrl + regex.urls_from_attachment_list(   matches[0] )[1]
 					get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 				} else {
-					long_matches = body.match( /<dt([\s|\S]*?)dt>/g )
-					possible_patches = _.map( long_matches, function( match ) {
-						return _.clean( _.trim( _(match).stripTags().replace( /\n/g, ' ' ) ) )
-					})
+					long_matches = regex.long_matches( body )
+					possible_patches = regex.possible_patches( long_matches ) 
+
 					grunt.log.debug( 'possible_patches: ' + JSON.stringify( possible_patches ) )
 					grunt.log.debug( 'long_matches: ' + JSON.stringify( long_matches ) )
 					inquirer.prompt([
@@ -128,7 +128,8 @@ module.exports = function(grunt) {
 						}
 					], function ( answers ) {
 						grunt.log.debug( 'answers:' + JSON.stringify(answers) )
-						match_url = options.tracUrl + matches[ _.indexOf( possible_patches, answers.patch_name) ].match(  /href="([^"]+)"/ )[1]
+						match_url = options.tracUrl 
+						+ regex.urls_from_attachment_list( matches[ _.indexOf( possible_patches, answers.patch_name) ])[1]
 						get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 
 					})
