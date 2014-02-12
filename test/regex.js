@@ -25,6 +25,14 @@ describe( 'regular expressions', function() {
 		done()
 	})
 
+	it('url from a list of attachments', function(done){
+		var matches = regex.patch_attachments( html23994 )
+			url = 'core.trac.wordpress.org' + regex.urls_from_attachment_list(   matches[0] )[1]
+
+		expect( url ).to.be.equal( 'core.trac.wordpress.org/attachment/ticket/23994/23994.diff' )
+		done()
+	})
+
 	it('no patches on a ticket', function(done){
 		var matches = regex.patch_attachments( html23989 )
 
