@@ -209,7 +209,7 @@ module.exports = function(grunt) {
 	}
 
 
-	grunt.registerTask( 'patch', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
+	grunt.registerTask( 'patch_wordpress', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
 		var done = this.async()
 		var options = this.options(defaults)
 
