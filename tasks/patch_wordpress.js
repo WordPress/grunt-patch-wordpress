@@ -116,7 +116,7 @@ module.exports = function(grunt) {
 					get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 				} else {
 					long_matches = regex.long_matches( body )
-					possible_patches = regex.possible_patches( long_matches ) 
+					possible_patches = regex.possible_patches( long_matches )
 
 					grunt.log.debug( 'possible_patches: ' + JSON.stringify( possible_patches ) )
 					grunt.log.debug( 'long_matches: ' + JSON.stringify( long_matches ) )
@@ -128,7 +128,7 @@ module.exports = function(grunt) {
 						}
 					], function ( answers ) {
 						grunt.log.debug( 'answers:' + JSON.stringify(answers) )
-						match_url = options.tracUrl 
+						match_url = options.tracUrl
 						+ regex.urls_from_attachment_list( matches[ _.indexOf( possible_patches, answers.patch_name) ])[1]
 						get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 
@@ -186,11 +186,12 @@ module.exports = function(grunt) {
 			files = _.filter( result.split( "\n" ) , function( file ) {
 				return ( _.str.include( file, 'patch' ) || _.str.include( file, 'diff') )
 			})
+			grunt.log.debug( 'files: ' + JSON.stringify( files ) )
 
 			if ( files.length === 0 ) {
 				file_fail( done )
 			} else if ( files.length === 1 ) {
-				apply_patch( files[0] , done, options )
+				apply_patch( regex.local_file_clean( files[0] ), done, options )
 			} else {
 				inquirer.prompt([
 					{	type: 'list',
@@ -199,7 +200,7 @@ module.exports = function(grunt) {
 						choices: files
 					}
 				], function ( answers ) {
-					var file = answers.file.replace( '?', '' ).replace( /\s/g, '' )
+					var file = regex.local_file_clean( answers.file )
 					apply_patch( file , done, options )
 				})
 			}

@@ -39,4 +39,11 @@ describe( 'regular expressions', function() {
 		expect( matches ).to.be.null
 		done()
 	})
+
+	it('filenames should be cleaned', function(done) {
+		var filename = "?       one.diff"
+
+		expect( regex.local_file_clean( filename ) ).to.equal( "one.diff" )
+		done()
+	})
 })
