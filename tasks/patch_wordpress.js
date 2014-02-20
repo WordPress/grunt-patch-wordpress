@@ -174,11 +174,11 @@ module.exports = function(grunt) {
 		grunt.log.errorlns( '' )
 		grunt.log.errorlns( '1) have a diff or patch in your WordPress Directory' )
 		grunt.log.errorlns( '' )
-		grunt.log.errorlns( '2) enter a ticket number e.g. grunt patch:15705' )
+		grunt.log.errorlns( '2) enter a ticket number, e.g. grunt patch:15705' )
 		grunt.log.errorlns( '' )
-		grunt.log.errorlns( '3) enter a ticket url e.g. grunt patch:https://core.trac.wordpress.org/ticket/15705' )
+		grunt.log.errorlns( '3) enter a ticket url, e.g. grunt patch:https://core.trac.wordpress.org/ticket/15705' )
 		grunt.log.errorlns( '' )
-		grunt.log.errorlns( '4) enter a patch url e.g. grunt patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff' )
+		grunt.log.errorlns( '4) enter a patch url, e.g. grunt patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff' )
 		grunt.log.errorlns( '' )
 
 		if ( typeof( msg ) === 'string' ) {
