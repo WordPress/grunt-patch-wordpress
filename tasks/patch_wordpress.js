@@ -172,7 +172,7 @@ module.exports = function(grunt) {
 		grunt.log.errorlns( '1) have a diff or patch in your WordPress Directory' )
 		grunt.log.errorlns( '2) enter a ticket number ala grunt patch:15705' )
 		grunt.log.errorlns( '3) enter a ticket url ala grunt patch:https://core.trac.wordpress.org/ticket/15705' )
-		grunt.log.errorlns( '4) enter a patch url ala grunt patch:https://core.trac.wordpress.org/attachment/ticket/26870/26870-media-views.diff' )
+		grunt.log.errorlns( '4) enter a patch url ala grunt patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff' )
 
 		if ( typeof( msg ) === 'string' ) {
 			grunt.verbose.errorlns( 'msg: ' + msg )
