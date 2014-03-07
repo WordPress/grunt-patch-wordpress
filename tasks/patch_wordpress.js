@@ -34,14 +34,32 @@ module.exports = function(grunt) {
 		return fs.existsSync('.svn')
 	}
 
+	function working_dir(){
+		return process.cwd()
+	}
+
 	function apply_patch( patch_url , done , options ){
 		grunt.verbose.write( patch_url )
 		parsed_url = url.parse( patch_url )
 
 		// What to do when either our patch is ready
-		grunt.event.once('fileReady', function(level){
-			exec('patch -p' + level + ' < '  + temp_file, function(error, result, code) {
-				grunt.log.debug( 'level: '  + level  )
+		grunt.event.once('fileReady', function(level, move_to_src){
+			var patchOptions = {}
+				, command = ''
+
+			// Decide if we need to be in src
+			if ( move_to_src ) {
+				patchOptions.cwd =  working_dir() + '/src'
+				temp_file = working_dir() + '/' + temp_file
+			}
+
+			command = 'patch -p' + level + ' < '  + temp_file
+
+			grunt.log.debug( 'patch options: ' + JSON.stringify( patchOptions ) )
+			grunt.log.debug( 'patch command: ' + JSON.stringify( command ) )
+			grunt.log.debug( 'patch temp_file: ' + JSON.stringify( temp_file ) )
+
+			exec(command, patchOptions, function(error, result, code) {
 				grunt.log.debug( 'error: '  + error  )
 				grunt.log.debug( 'result: ' + result )
 				grunt.log.debug( 'code: '   + code )
@@ -145,20 +163,22 @@ module.exports = function(grunt) {
 
 	function get_local_patch(patch_url) {
 		var body = grunt.file.read(patch_url)
-			, level = patch.level_calculator( body )
+			, level = 0
+			, move_to_src = patch.move_to_src( body )
 
 		grunt.file.copy(patch_url, temp_file)
-		grunt.event.emit('fileReady', level)
+		grunt.event.emit( 'fileReady', level, move_to_src )
 	}
 
 	function get_patch( patch_url ){
 		grunt.log.debug( 'getting patch: ' + patch_url )
 		request(patch_url, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
-				var level = patch.level_calculator( body )
+				var level = 0
+					, move_to_src = patch.move_to_src( body )
 
 				grunt.file.write( temp_file, body)
-				grunt.event.emit('fileReady', level)
+				grunt.event.emit( 'fileReady', level, move_to_src )
 			} else {
 				// something went wrong
 				grunt.event.emit('fileFail', 'get_patch_fail \n status: ' + response.statusCode )
