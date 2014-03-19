@@ -26,6 +26,25 @@ patch_wordpress{
 }
 ```
 
+## Patching from the command line
+
+1. Have a diff or a patch file in your working Directory, then run ```grunt patch```.  
+If multiple files are found, you'll be asked which one to apply.
+
+1. Enter a ticket number, e.g.  
+```bash
+grunt patch:15705
+```
+1. Enter a ticket url, e.g.  
+```bash
+grunt patch:https://core.trac.wordpress.org/ticket/15705
+```
+
+1. Enter a patch url, e.g.  
+```bash
+grunt patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff
+```
+
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
