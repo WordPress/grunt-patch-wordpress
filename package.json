@@ -31,13 +31,14 @@
   "devDependencies": {
     "grunt-contrib-jshint": "~0.6.0",
     "grunt-contrib-clean": "~0.4.0",
-	"time-grunt": "~0.2.3",
-	"grunt-mocha-test": "~0.8.1",
-	"chai": "~1.8.1",
+    "time-grunt": "~0.2.3",
+    "grunt-mocha-test": "~0.8.1",
+    "chai": "~1.8.1",
     "grunt": "~0.4.1",
     "load-grunt-tasks": "~0.2.0",
     "grunt-notify": "~0.2.17",
-    "grunt-contrib-watch": "~0.5.3"
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-release": "~0.7.0"
   },
   "peerDependencies": {
     "grunt": "~0.4.1"
