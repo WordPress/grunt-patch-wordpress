@@ -28,19 +28,19 @@ patch_wordpress{
 
 ## Patching from the command line
 
-1. Have a diff or a patch file in your working Directory, then run ```grunt patch```.  
+1. Have a diff or a patch file in your working Directory, then run ```grunt patch```.
 If multiple files are found, you'll be asked which one to apply.
 
-1. Enter a ticket number, e.g.  
+1. Enter a ticket number, e.g.
 ```bash
 grunt patch:15705
 ```
-1. Enter a ticket url, e.g.  
+1. Enter a ticket url, e.g.
 ```bash
 grunt patch:https://core.trac.wordpress.org/ticket/15705
 ```
 
-1. Enter a patch url, e.g.  
+1. Enter a patch url, e.g.
 ```bash
 grunt patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff
 ```
@@ -53,3 +53,4 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 - 0.1.0 - Initial Release
 - 0.1.1 - Fix bug when only one diff|patch exists in the working directory
 - 0.1.2 - Update wording of instructions
+- 0.2.0 - Add support for patches generated in more ways. Improve UX by outputing results all the time
