@@ -13,8 +13,16 @@ var grunt = require( 'grunt' )
 	, developSampleSvn = grunt.file.read ( 'test/fixtures/develop.svn.wp-config-sample.diff' )
 	, testsSvn = grunt.file.read ( 'test/fixtures/tests.develop.svn.diff' )
 	, testsGit = grunt.file.read ( 'test/fixtures/tests.develop.git.diff' )
+	, abyes = grunt.file.read( 'test/fixtures/git.diff.ab.diff' )
 
 describe( 'Patch helpers', function() {
+
+	it( 'git a/b diffs should not automatticaly trigger moving to src', function( done ){
+		expect( patch.move_to_src( abyes ) ).to.not.be.true
+
+		done()
+	})
+
 	it( 'tests diffs should always be applied in the root of the checkout', function(done){
 
 		expect( patch.move_to_src( testsGit ) ).to.not.be.true
@@ -68,6 +76,31 @@ describe( 'Patch helpers', function() {
 
 		done()
 
+	})
+
+	it ( 'is_ab should return true on patches with a/ b/ style', function(done){
+
+		expect( patch.is_ab( abyes ) ).to.be.true
+
+		done()
+	})
+
+	it ( 'is_ab should return false on patches without a/ b/ style', function(done){
+
+		expect( patch.is_ab( developSampleGit ) ).to.not.be.true
+		expect( patch.is_ab( developSampleSvn ) ).to.not.be.true
+		expect( patch.is_ab( coreIndexGit ) ).to.not.be.true
+		expect( patch.is_ab( coreIndexSvn ) ).to.not.be.true
+		expect( patch.is_ab( coreGit ) ).to.not.be.true
+		expect( patch.is_ab( coreSvn ) ).to.not.be.true
+		expect( patch.is_ab( developGit ) ).to.not.be.true
+		expect( patch.is_ab( developSvn ) ).to.not.be.true
+		expect( patch.is_ab( developIndexGit ) ).to.not.be.true
+		expect( patch.is_ab( developIndexSvn ) ).to.not.be.true
+		expect( patch.is_ab( testsGit ) ).to.not.be.true
+		expect( patch.is_ab( testsSvn ) ).to.not.be.true
+
+		done()
 	})
 
 })
