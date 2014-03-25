@@ -61,11 +61,13 @@ module.exports = function(grunt) {
 
 			exec(command, patchOptions, function(error, result, code) {
 				grunt.log.debug( 'error: '  + error  )
-				grunt.log.debug( 'result: ' + result )
 				grunt.log.debug( 'code: '   + code )
 
+				// Output our results
+				grunt.log.writeln( "Result:" )
+				grunt.log.writeln( result )
+
 				if ( error ) {
-					grunt.log.errorlns( result )
 					done( 1 )
 				} else {
 					grunt.file.delete(temp_file)
