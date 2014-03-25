@@ -1,7 +1,7 @@
 {
   "name": "grunt-patch-wordpress",
   "description": "Patch your core WordPress",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "homepage": "https://github.com/aaronjorbin/grunt-patch-wordpress",
   "author": {
     "name": "Aaron Jorbin",
