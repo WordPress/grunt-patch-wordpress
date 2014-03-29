@@ -67,10 +67,16 @@ module.exports = function(grunt) {
 				grunt.log.writeln( "Result:" )
 				grunt.log.writeln( result )
 
+				// if debug is enabled, don-t delete the file
+				if ( grunt.option( 'debug' ) ) {
+					grunt.log.debug( 'File Saved' )
+				} else {
+					grunt.file.delete(temp_file)
+				}
+
 				if ( error ) {
 					done( 1 )
 				} else {
-					grunt.file.delete(temp_file)
 					done(0)
 				}
 			})
