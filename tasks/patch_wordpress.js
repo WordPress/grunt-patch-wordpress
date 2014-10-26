@@ -153,8 +153,9 @@ module.exports = function(grunt) {
 						{	type: 'list',
 							name: 'patch_name',
 							message: 'Please select a patch to apply',
-							// Reverse the list so that the default choice is the latest patch
-							choices: possible_patches.reverse()
+							choices: possible_patches,
+							// preselect the most recent patch
+							default: possible_patches.length - 1
 						}
 					], function ( answers ) {
 						grunt.log.debug( 'answers:' + JSON.stringify(answers) )
