@@ -10,6 +10,7 @@
 
 var request = require( 'request' )
 	, exec =  require( 'child_process' ).exec
+	, spawn = require( 'child_process' ).spawn
 	, inquirer = require( 'inquirer' )
 	, url = require( 'url' )
 	, fs = require( 'fs' )
@@ -45,7 +46,12 @@ module.exports = function(grunt) {
 		// What to do when either our patch is ready
 		grunt.event.once('fileReady', function(level, move_to_src){
 			var patchOptions = {}
-				, command = ''
+				, patchArgs = []
+				, patchProcess
+
+			// Set patch process to use the existing I/O streams, which will output
+			// the command's results and allow for user input on patch error
+			patchOptions.stdio = 'inherit'
 
 			// Decide if we need to be in src
 			if ( move_to_src ) {
@@ -53,32 +59,29 @@ module.exports = function(grunt) {
 				temp_file = working_dir() + '/' + temp_file
 			}
 
-			command = 'patch -p' + level + ' < '  + temp_file
+			// Set the patch command's arguments
+			patchArgs.push( '-p' + level )
+			patchArgs.push( '--input=' + temp_file )
 
 			grunt.log.debug( 'patch options: ' + JSON.stringify( patchOptions ) )
-			grunt.log.debug( 'patch command: ' + JSON.stringify( command ) )
+			grunt.log.debug( 'patch arguments: ' + JSON.stringify( patchArgs ) )
 			grunt.log.debug( 'patch temp_file: ' + JSON.stringify( temp_file ) )
 
-			exec(command, patchOptions, function(error, result, code) {
-				grunt.log.debug( 'error: '  + error  )
-				grunt.log.debug( 'code: '   + code )
+			patchProcess = spawn( 'patch', patchArgs, patchOptions )
 
-				// Output our results
-				grunt.log.writeln( "Result:" )
-				grunt.log.writeln( result )
+			patchProcess.on('exit', function( code, signal ) {
+				if ( signal ) {
+					grunt.log.debug( 'error signal: ' + signal )
+				}
 
-				// if debug is enabled, don-t delete the file
+				// if debug is enabled, don't delete the file
 				if ( grunt.option( 'debug' ) ) {
 					grunt.log.debug( 'File Saved' )
 				} else {
 					grunt.file.delete(temp_file)
 				}
 
-				if ( error ) {
-					done( 1 )
-				} else {
-					done(0)
-				}
+				done( code )
 			})
 		})
 
