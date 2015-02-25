@@ -150,7 +150,9 @@ module.exports = function(grunt) {
 						{	type: 'list',
 							name: 'patch_name',
 							message: 'Please select a patch to apply',
-							choices: possible_patches
+							choices: possible_patches,
+							// preselect the most recent patch
+							default: possible_patches.length - 1
 						}
 					], function ( answers ) {
 						grunt.log.debug( 'answers:' + JSON.stringify(answers) )
