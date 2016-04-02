@@ -26,7 +26,7 @@ patch_wordpress{
 }
 ```
 
-## Patching from the command line
+## Apply a patch from the command line
 
 1. Have a diff or a patch file in your working Directory, then run ```grunt patch```.
 If multiple files are found, you'll be asked which one to apply.
@@ -39,6 +39,14 @@ If multiple files are found, you'll be asked which one to apply.
 
 4. Enter a patch url, e.g.
   * `grunt patch:patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff`
+
+## Upload a patch from the command line
+
+After you've made changes to your local WordPress develop repository, you can upload a patch file directly to a Trac ticket. e.g. given the ticket number is 2907,
+
+```bash
+grunt upload_patch:2907
+```
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).

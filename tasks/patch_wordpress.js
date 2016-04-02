@@ -18,7 +18,7 @@ var request = require( 'request' )
 	, trac = require( '../lib/trac.js' )
 	, patch = require( '../lib/patch.js' )
 	, regex = require( '../lib/regex.js' )
-
+	, xmlrpc = require('xmlrpc')
 
 _.str = _.str = require('underscore.string')
 _.mixin( _.str.exports() )
@@ -278,6 +278,61 @@ module.exports = function(grunt) {
 
 		}
 
+	})
+
+	grunt.registerTask( 'upload_patch', 'Upload the current diff of your develop-wordpress directory to Trac', function( ticketNumber ) {
+		var done = this.async()
+		var options = this.options(defaults)
+
+		grunt.log.debug( 'ticketNumber: ' + ticketNumber )
+		grunt.log.debug( 'options: ' + JSON.stringify( options ) )
+
+		ticketNumber = parseInt( ticketNumber, 10 )
+		if ( typeof ticketNumber != 'number' ) {
+			grunt.fail.warn( 'A ticket number is required to upload a patch.' )
+		}
+
+		var uploadPatchWithCredentials = function( username, password ) {
+			var diffCommand = is_svn() ? 'svn diff' : 'git diff'
+
+			exec( diffCommand, function(error, result, code) {
+				var client = xmlrpc.createSecureClient({
+					hostname: options.tracUrl,
+					port: 443,
+					path: '/login/xmlrpc',
+					basic_auth: {
+						user: username,
+						pass: password
+					}
+				})
+				client.methodCall(
+					'ticket.putAttachment',
+					[
+						ticketNumber,
+						ticketNumber + '.diff',
+						'', // description. empty for now.
+						new Buffer( new Buffer(result).toString('base64'), 'base64'),
+						false // never overwrite the old file
+					], function( err, value ) {
+						if ( err === null ) {
+							grunt.log.writeln( 'Uploaded patch.' )
+							done()
+						} else {
+							grunt.fail.warn( 'Something went wrong when attempting to upload the patch. Please confirm your credentials and the ticket number. ' + err )
+						}
+					}
+				)
+			})
+		}
+		inquirer.prompt(
+			[
+				{ type: 'input', name: 'username', message: 'Enter your WordPress.org username' },
+				{ type: 'password', name: 'password', message: 'Enter your WordPress.org password' }
+			],
+			function(answers) {
+				uploadPatchWithCredentials( answers.username, answers.password )
+			}
+		)
 	})
 
 }
