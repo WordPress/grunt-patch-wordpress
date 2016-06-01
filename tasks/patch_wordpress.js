@@ -94,8 +94,17 @@ module.exports = function(grunt) {
 			done(false)
 		})
 
+		// if patch_url is a github url
+		if ( parsed_url.hostname === 'github.com' ){
+
+			grunt.log.debug( 'github url detected: ' + patch_url )
+			if ( patch_url.slice( -5 ) !== '.diff' &&  patch_url.slice( -6 ) !== '.patch' ){
+				patch_url += '.diff';	
+			}
+			get_patch( patch_url, options )
+
 		// if patch_url is a full url and is a raw-attachement, just apply it
-		if( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/raw-attachment/) ) {
+		} else if( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/raw-attachment/) ) {
 			get_patch( patch_url, options )
 
 		// if patch_url is full url and is an attachment, convert it to a raw attachment
@@ -119,7 +128,6 @@ module.exports = function(grunt) {
 			grunt.event.emit('fileFile', 'All matching failed.  Please enter a ticket url, ticket number, patch url')
 		}
 	}
-
 
 	function get_patch_from_ticket_number( patch_url, options  ){
 		grunt.log.debug( 'get_patch_from_ticket_number: ' + patch_url )
