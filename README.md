@@ -59,3 +59,4 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 - 0.2.0 - Add support for patches generated in more ways. Improve UX by outputing results all the time
 - 0.3.0 - Only keep diff when debug flag is passed. Default to selecting newest patch. Make more files patchable. Allow input during patching process incase the shell prompts the user
 - 0.4.0 - add upload_patch, add support for github urls
+- 0.4.1 - Remove Mocha as a peerdendency
