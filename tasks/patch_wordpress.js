@@ -301,7 +301,7 @@ module.exports = function(grunt) {
 		}
 
 		var uploadPatchWithCredentials = function( username, password ) {
-			var diffCommand = is_svn() ? 'svn diff' : 'git diff'
+			var diffCommand = is_svn() ? 'svn diff --diff-cmd diff' : 'git diff'
 
 			exec( diffCommand, function(error, result, code) {
 				var client = xmlrpc.createSecureClient({
