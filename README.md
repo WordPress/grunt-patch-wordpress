@@ -38,7 +38,10 @@ If multiple files are found, you'll be asked which one to apply.
   * `grunt patch:https://core.trac.wordpress.org/ticket/15705`
 
 4. Enter a patch url, e.g.
-  * `grunt patch:patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff`
+  * `grunt patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff`
+  
+5. Enter a github url that points to a changeset such as a Pull Request, e.g.
+  * `grunt patch:https://github.com/aaronjorbin/develop.wordpress/pull/23`
 
 ## Upload a patch from the command line
 
