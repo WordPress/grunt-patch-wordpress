@@ -19,6 +19,7 @@ var request = require( 'request' )
 	, patch = require( '../lib/patch.js' )
 	, regex = require( '../lib/regex.js' )
 	, xmlrpc = require('xmlrpc')
+	, clortho = require( 'clortho' )
 
 _.str = _.str = require('underscore.string')
 _.mixin( _.str.exports() )
@@ -333,12 +334,19 @@ module.exports = function(grunt) {
 			})
 		}
 		inquirer.prompt(
-			[
-				{ type: 'input', name: 'username', message: 'Enter your WordPress.org username' },
-				{ type: 'password', name: 'password', message: 'Enter your WordPress.org password' }
-			],
-			function(answers) {
-				uploadPatchWithCredentials( answers.username, answers.password )
+			[{
+				type: 'input',
+				name: 'username',
+				message: 'Enter your WordPress.org username'
+			}],
+			function( answers ) {
+				clortho({
+					service: 'WordPress.org Trac',
+					username: answers.username,
+					message: 'Enter your WordPress.org password:'
+			}).then( function( credential ) {
+					uploadPatchWithCredentials( credential.username, credential.password )
+				});
 			}
 		)
 	})
