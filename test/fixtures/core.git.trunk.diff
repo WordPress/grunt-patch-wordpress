@@ -1,0 +1,11 @@
+diff --git trunk/wp-load.php trunk/wp-load.php
+index fb85953..18ed0f6 100644
+--- trunk/wp-load.php
++++ trunk/wp-load.php
+@@ -1,4 +1,6 @@
+ <?php
++
++
+ /**
+  * Bootstrap file for setting the ABSPATH constant
+  * and loading the wp-config.php file. The wp-config.php
