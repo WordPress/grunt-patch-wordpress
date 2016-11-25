@@ -15,7 +15,6 @@ var grunt = require( 'grunt' )
 	, testsGit = grunt.file.read ( 'test/fixtures/tests.develop.git.diff' )
 	, abyes = grunt.file.read( 'test/fixtures/git.diff.ab.diff' )
 	, coreTrunkSvn = grunt.file.read ( 'test/fixtures/core.svn.trunk.diff' )
-	, coreTrunkGit = grunt.file.read ( 'test/fixtures/core.git.trunk.diff' )
 
 describe( 'Patch helpers', function() {
 
@@ -67,14 +66,6 @@ describe( 'Patch helpers', function() {
 
 		expect( patch.move_to_src( coreTrunkSvn ) ).to.be.true
 		expect( patch.level_calculator( coreTrunkSvn ) ).to.equal( 1 )
-
-		done()
-	})
-
-	it( 'core.git.wordpress.org diffs from trunk should always be applied in the src folder', function(done){
-
-		expect( patch.move_to_src( coreTrunkGit ) ).to.be.true
-		expect( patch.level_calculator( coreTrunkGit ) ).to.equal( 1 )
 
 		done()
 	})
