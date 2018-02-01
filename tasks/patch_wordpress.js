@@ -8,6 +8,8 @@
  * Licensed under the MIT license.
  */
 
+console.log("felice mac");
+
 var request = require( 'request' )
     , exec =  require( 'child_process' ).exec
     , spawn = require( 'child_process' ).spawn
@@ -59,6 +61,8 @@ module.exports = function(grunt) {
                 temp_file = working_dir() + '/' + temp_file
             }
 
+            map_old_to_new_file_name( temp_file );
+
             // Set the patch command's arguments
             patchArgs.push( '-p' + level )
             patchArgs.push( '--input=' + temp_file )
@@ -72,7 +76,7 @@ module.exports = function(grunt) {
             patchProcess.on('exit', function( code, signal ) {
                 if ( signal ) {
                     grunt.log.debug( 'error signal: ' + signal )
-                    // To do: 'signal' is only set if there is an error. If there is an error, we should try again with the mapped file path.
+
                 }
 
                 // if debug is enabled, don't delete the file
@@ -128,6 +132,11 @@ module.exports = function(grunt) {
         } else {
             grunt.event.emit('fileFile', 'All matching failed.  Please enter a ticket url, ticket number, patch url')
         }
+    }
+
+    var map_old_to_new_file_name = function( file_path ){
+        var body = grunt.file.read( file_path );
+        console.log( body );
     }
 
     var map_object = {
