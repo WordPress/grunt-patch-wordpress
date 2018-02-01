@@ -8,8 +8,6 @@
  * Licensed under the MIT license.
  */
 
-console.log("felice mac");
-
 var request = require( 'request' )
     , exec =  require( 'child_process' ).exec
     , spawn = require( 'child_process' ).spawn
@@ -61,8 +59,6 @@ module.exports = function(grunt) {
                 temp_file = working_dir() + '/' + temp_file
             }
 
-            map_old_to_new_file_name( temp_file );
-
             // Set the patch command's arguments
             patchArgs.push( '-p' + level )
             patchArgs.push( '--input=' + temp_file )
@@ -70,6 +66,8 @@ module.exports = function(grunt) {
             grunt.log.debug( 'patch options: ' + JSON.stringify( patchOptions ) )
             grunt.log.debug( 'patch arguments: ' + JSON.stringify( patchArgs ) )
             grunt.log.debug( 'patch temp_file: ' + JSON.stringify( temp_file ) )
+
+            map_old_to_new_file_name( temp_file );
 
             patchProcess = spawn( 'patch', patchArgs, patchOptions )
 
@@ -136,6 +134,17 @@ module.exports = function(grunt) {
 
     var map_old_to_new_file_name = function( file_path ){
         var body = grunt.file.read( file_path );
+        var regex = /((-{3}|\+{3}) (src\/wp-admin\/js\/accordion\.js))|(diff --git .* (src\/wp-admin\/js\/accordion\.js)\n)/ig
+        // todo: escape / and . in map_object entries to make regex. Escape met .replace op entries / --> \/ en . --> \.
+        var string = "--- src/wp-admin/js/accordion.js";
+        var newstring = string.replace(regex, "hoi");
+        console.log("newstring", newstring)
+        for ( var entry in map_object ) {
+        //    console.log( map_object[entry] )
+
+        }
+
+
         console.log( body );
     }
 
@@ -189,7 +198,7 @@ module.exports = function(grunt) {
         'src/wp-admin/js/widgets.js': './src/js/_enqueues/admin/widgets.js',
         'src/wp-admin/js/word-count.js': './src/js/_enqueues/wp/utils/word-count.js',
         'src/wp-admin/js/wp-fullscreen-stub.js': './src/js/_enqueues/deprecated/fullscreen-stub.js',
-        'src/wp-admin/js/xfn.js': './src/js/_enqueues/admin/xfn.js'
+        'src/wp-admin/js/xfn.js': './src/js/_enqueues/admin/xfn.js',
         'src/wp-includes/js/admin-bar.js': './src/js/_enqueues/lib/admin-bar.js',
         'src/wp-includes/js/api-request.js': './src/js/_enqueues/wp/api-request.js',
         'src/wp-includes/js/autosave.js': './src/js/_enqueues/wp/autosave.js',
@@ -299,9 +308,9 @@ module.exports = function(grunt) {
         'src/wp-includes/js/media/views/media-frame.js' : 'src/js/media/views/media-frame.js',
         'src/wp-includes/js/media/views/menu-item.js' : 'src/js/media/views/menu-item.js',
         'src/wp-includes/js/media/views/menu.js' : 'src/js/media/views/menu.js',
-        "src/wp-includes/js/media/views/modal.js' : 'src/js/media/views/modal.js",
-        "src/wp-includes/js/media/views/priority-list.js' : 'src/js/media/views/priority-list.js",
-        "src/wp-includes/js/media/views/router-item.js' : 'src/js/media/views/router-item.js",
+        'src/wp-includes/js/media/views/modal.js' : 'src/js/media/views/modal.js',
+        'src/wp-includes/js/media/views/priority-list.js' : 'src/js/media/views/priority-list.js',
+        'src/wp-includes/js/media/views/router-item.js' : 'src/js/media/views/router-item.js',
         'src/wp-includes/js/media/views/router.js' : 'src/js/media/views/router.js',
         'src/wp-includes/js/media/views/search.js' : 'src/js/media/views/search.js',
         'src/wp-includes/js/media/views/selection.js' : 'src/js/media/views/selection.js',
