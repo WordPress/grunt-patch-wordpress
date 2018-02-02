@@ -26,9 +26,9 @@ _.mixin( _.str.exports() )
 
 module.exports = function(grunt) {
 	var temp_file = 'wppatch.diff'
-		, defaults = {
-		tracUrl : 'core.trac.wordpress.org'
-	}
+			, defaults = {
+			tracUrl : 'core.trac.wordpress.org'
+		}
 
 
 	function is_svn(){
@@ -106,27 +106,27 @@ module.exports = function(grunt) {
 			}
 			get_patch( patch_url, options )
 
-			// if patch_url is a full url and is a raw-attachement, just apply it
+		// if patch_url is a full url and is a raw-attachement, just apply it
 		} else if( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/raw-attachment/) ) {
 			get_patch( patch_url, options )
 
-			// if patch_url is full url and is an attachment, convert it to a raw attachment
+		// if patch_url is full url and is an attachment, convert it to a raw attachment
 		} else if ( parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/attachment/) && parsed_url.pathname.match(/(patch|diff)/ ) ) {
 			get_patch( trac.convert_to_raw ( parsed_url, options ) )
 
-			// if patch_url is just a ticket number, get a list of patches on that ticket and allow user to choose one
+		// if patch_url is just a ticket number, get a list of patches on that ticket and allow user to choose one
 		} else if (  parsed_url.hostname === options.tracUrl && parsed_url.pathname.match(/ticket/) ) {
 			get_patch_from_ticket( patch_url, options )
 
-			// if we just enter a number, assume it is a ticket number
+		// if we just enter a number, assume it is a ticket number
 		} else if ( parsed_url.hostname === null && ! parsed_url.pathname.match(/\./) ) {
 			get_patch_from_ticket_number( patch_url, options )
 
-			// if patch_url is a local file, just use that
+		// if patch_url is a local file, just use that
 		} else if ( parsed_url.hostname === null ) {
 			get_local_patch( patch_url, options )
 
-			// We've failed in our mission
+		// We've failed in our mission
 		} else {
 			grunt.event.emit('fileFile', 'All matching failed.  Please enter a ticket url, ticket number, patch url')
 		}
@@ -134,12 +134,19 @@ module.exports = function(grunt) {
 
 	var map_old_to_new_file_name = function( file_path ){
 		var body = grunt.file.read( file_path );
-		var regex = /((-{3}|\+{3}) (src\/wp-admin\/js\/accordion\.js))|(diff --git .* (src\/wp-admin\/js\/accordion\.js)\n)/ig
+		var regex1 = "/((-{3}|\+{3}) (" + entry + "))/ig";
+		var regex2 = "/((diff --git .* )(" + entry + ")(\n))/ig";
 		// todo: escape / and . in map_object entries to make regex. Escape met .replace op entries / --> \/ en . --> \.
 		var string = "--- src/wp-admin/js/accordion.js";
-		var newstring = string.replace(regex, "hoi");
-		console.log("newstring", newstring)
 		for ( var entry in map_object ) {
+		    entry = entry.replace( "/", "\/" );
+		    entry = entry.replace( ".", "\." );
+			console.log( entry )
+		    body = body.replace( regex1, "$1map_object[entry]" );
+		    body = body.replace( regex2, "$2map_object[entry]$4" );
+			console.log( body );
+			body = grunt.file.write( file_path, body );
+		    console.log( entry )
 		//    console.log( map_object[entry] )
 
 		}
