@@ -137,7 +137,7 @@ module.exports = function(grunt) {
 
 		for ( var entry in map_object ) {
 			// Regex to match lines starting with +++ or --- (todo: name?)
-			var regex1 = new RegExp( "((\\-{3}|\\+{3}) (" + entry + "))", "ig");
+			var regex1 = new RegExp( "((\\-{3}|\\+{3} )(" + entry + "))", "ig");
 
 			// Regex to match second filename at the top of each individual diff (todo: name?).
 			var regex2 = new RegExp( "((diff \\-\\-git .* )(" + entry + ")(\\n))", "ig");
@@ -146,16 +146,12 @@ module.exports = function(grunt) {
 		    var escapedEntry = entry.replace( /\//g, "\\/" );
 			escapedEntry = escapedEntry.replace( /\./g, "\\." );
 
-		    body = body.replace( regex1, "$1" + map_object[entry] );
+		    body = body.replace( regex1, "$2" + map_object[entry] );
 		    body = body.replace( regex2, "$2" + map_object[entry] + "$4" );
 			console.log( "this is the body", body );
 			body = grunt.file.write( file_path, body );
-		    console.log( entry )
-		//    console.log( map_object[entry] )
-
 		}
-
-
+		
 		console.log( body );
 	}
 
