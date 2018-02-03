@@ -134,17 +134,21 @@ module.exports = function(grunt) {
 
 	var map_old_to_new_file_name = function( file_path ){
 		var body = grunt.file.read( file_path );
-		var regex1 = "/((-{3}|\+{3}) (" + entry + "))/ig";
-		var regex2 = "/((diff --git .* )(" + entry + ")(\n))/ig";
-		// todo: escape / and . in map_object entries to make regex. Escape met .replace op entries / --> \/ en . --> \.
-		var string = "--- src/wp-admin/js/accordion.js";
+
 		for ( var entry in map_object ) {
-		    entry = entry.replace( "/", "\/" );
-		    entry = entry.replace( ".", "\." );
-			console.log( entry )
-		    body = body.replace( regex1, "$1map_object[entry]" );
-		    body = body.replace( regex2, "$2map_object[entry]$4" );
-			console.log( body );
+			// Regex to match lines starting with +++ or --- (todo: name?)
+			var regex1 = new RegExp( "((\\-{3}|\\+{3}) (" + entry + "))", "ig");
+
+			// Regex to match second filename at the top of each individual diff (todo: name?).
+			var regex2 = new RegExp( "((diff \\-\\-git .* )(" + entry + ")(\\n))", "ig");
+
+			// Escape slashes and periods in preparation for the regex replace.
+		    var escapedEntry = entry.replace( /\//g, "\\/" );
+			escapedEntry = escapedEntry.replace( /\./g, "\\." );
+
+		    body = body.replace( regex1, "$1" + map_object[entry] );
+		    body = body.replace( regex2, "$2" + map_object[entry] + "$4" );
+			console.log( "this is the body", body );
 			body = grunt.file.write( file_path, body );
 		    console.log( entry )
 		//    console.log( map_object[entry] )
