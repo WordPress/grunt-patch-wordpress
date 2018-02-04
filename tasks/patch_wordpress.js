@@ -134,26 +134,34 @@ module.exports = function(grunt) {
 
 	var map_old_to_new_file_name = function( file_path ){
 		var body = grunt.file.read( file_path );
-
 		for ( var entry in map_object ) {
-			// Regex to match lines starting with +++ or --- (todo: name?)
-			var regex1 = new RegExp( "((\\-{3}|\\+{3} )(" + entry + "))", "ig");
+			// todo remove console.logs
+			// Regex to match the second filename of then diff header.
+			// todo: regex in name?
+			var headerRegex = new RegExp( "((diff \\-\\-git .* )(" + entry + ")(\\n))", "ig");
 
-			// Regex to match second filename at the top of each individual diff (todo: name?).
-			var regex2 = new RegExp( "((diff \\-\\-git .* )(" + entry + ")(\\n))", "ig");
+			// Regex to match the old and new file name of the chunks within the diff.
+			// todo: regex in name?
+			var chunkFileNameRegex = new RegExp( "((-{3}|\\+{3})( " + entry + "))", "ig");
 
 			// Escape slashes and periods in preparation for the regex replace.
 		    var escapedEntry = entry.replace( /\//g, "\\/" );
 			escapedEntry = escapedEntry.replace( /\./g, "\\." );
+			console.log( "type", typeof body)
 
-		    body = body.replace( regex1, "$2" + map_object[entry] );
-		    body = body.replace( regex2, "$2" + map_object[entry] + "$4" );
+			// todo: body.replace is not a function.
+			body = body.replace( chunkFileNameRegex, "$2 " + map_object[entry] );
+			console.log( "type2", typeof body)
+
+			body = body.replace( headerRegex, "$2 " + map_object[entry] + "$4" );
 			console.log( "this is the body", body );
+
+
 			body = grunt.file.write( file_path, body );
 		}
 		
-		console.log( body );
-	}
+		console.log( grunt.file.read( file_path ) );
+	};
 
 	var map_object = {
 		'src/wp-admin/js/accordion.js': './src/js/_enqueues/lib/accordion.js',
