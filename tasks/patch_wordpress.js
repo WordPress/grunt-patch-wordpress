@@ -382,7 +382,7 @@ module.exports = function(grunt) {
 					], function ( answers ) {
 						grunt.log.debug( 'answers:' + JSON.stringify(answers) )
 						match_url = options.tracUrl
-							+ regex.urls_from_attachment_list( matches[ _.indexOf( possible_patches, answers.patch_name) ])[1]
+						+ regex.urls_from_attachment_list( matches[ _.indexOf( possible_patches, answers.patch_name) ])[1]
 						get_patch( trac.convert_to_raw ( url.parse( 'https://' + match_url  ) ), options  )
 
 					})
