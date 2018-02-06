@@ -26,7 +26,7 @@ _.mixin( _.str.exports() )
 
 module.exports = function(grunt) {
 	var temp_file = 'wppatch.diff'
-			, defaults = {
+		, defaults = {
 			tracUrl : 'core.trac.wordpress.org'
 		}
 
@@ -67,14 +67,14 @@ module.exports = function(grunt) {
 			grunt.log.debug( 'patch arguments: ' + JSON.stringify( patchArgs ) )
 			grunt.log.debug( 'patch temp_file: ' + JSON.stringify( temp_file ) )
 
-			map_old_to_new_file_name( temp_file );
+			// Maps old file paths in patches to new file paths.
+			map_old_to_new_file_path( temp_file );
 
 			patchProcess = spawn( 'patch', patchArgs, patchOptions )
 
 			patchProcess.on('exit', function( code, signal ) {
 				if ( signal ) {
 					grunt.log.debug( 'error signal: ' + signal )
-
 				}
 
 				// if debug is enabled, don't delete the file
@@ -132,7 +132,7 @@ module.exports = function(grunt) {
 		}
 	}
 
-	var map_old_to_new_file_name = function( file_path ){
+	var map_old_to_new_file_path = function( file_path ){
 		var body = grunt.file.read( file_path );
 		for ( var entry in file_mappings ) {
 			// Regex to match the second filename of the diff header.
