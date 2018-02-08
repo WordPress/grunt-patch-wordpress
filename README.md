@@ -5,7 +5,7 @@
 > Patch your develop-wordpress directory like a boss (also works on other trac based projects)
 
 ## Getting Started
-This plugin requires Grunt `~0.4.1`
+This plugin requires Grunt `~0.4.5`
 
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
@@ -38,7 +38,10 @@ If multiple files are found, you'll be asked which one to apply.
   * `grunt patch:https://core.trac.wordpress.org/ticket/15705`
 
 4. Enter a patch url, e.g.
-  * `grunt patch:patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff`
+  * `grunt patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff`
+  
+5. Enter a github url that points to a changeset such as a Pull Request, e.g.
+  * `grunt patch:https://github.com/aaronjorbin/develop.wordpress/pull/23`
 
 ## Upload a patch from the command line
 
