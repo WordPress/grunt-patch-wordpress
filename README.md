@@ -1,6 +1,6 @@
 # grunt-patch-wordpress
 
-[![Build Status](https://travis-ci.org/aaronjorbin/grunt-patch-wordpress.png?branch=master)](https://travis-ci.org/aaronjorbin/grunt-patch-wordpress)
+[![Build Status](https://travis-ci.org/wordpress/grunt-patch-wordpress.png?branch=master)](https://travis-ci.org/wordpress/grunt-patch-wordpress)
 
 > Patch your develop-wordpress directory like a boss (also works on other trac based projects)
 
@@ -39,7 +39,7 @@ If multiple files are found, you'll be asked which one to apply.
 
 4. Enter a patch url, e.g.
   * `grunt patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff`
-  
+
 5. Enter a github url that points to a changeset such as a Pull Request, e.g.
   * `grunt patch:https://github.com/aaronjorbin/develop.wordpress/pull/23`
 
