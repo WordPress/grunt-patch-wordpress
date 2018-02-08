@@ -23,7 +23,7 @@ var request = require( 'request' )
 _.str = _.str = require('underscore.string')
 _.mixin( _.str.exports() )
 
-var file_mappings = {
+var file_mappings_this_update = {
 	'src/wp-admin/js/accordion.js': 'src/js/_enqueues/lib/accordion.js',
 	'src/wp-admin/js/code-editor.js': 'src/js/_enqueues/wp/code-editor.js',
 	'src/wp-admin/js/color-picker.js': 'src/js/_enqueues/lib/color-picker.js',
@@ -215,6 +215,7 @@ module.exports = function(grunt) {
 			tracUrl : 'core.trac.wordpress.org'
 		}
 
+
 	function is_svn(){
 		return fs.existsSync('.svn')
 	}
@@ -252,7 +253,7 @@ module.exports = function(grunt) {
 			grunt.log.debug( 'patch temp_file: ' + JSON.stringify( temp_file ) )
 
 			// Maps old file paths in patches to new file paths.
-			map_old_to_new_file_path( temp_file );
+			map_old_to_new_file_path( temp_file, file_mappings_this_update );
 
 			patchProcess = spawn( 'patch', patchArgs, patchOptions )
 
@@ -316,29 +317,42 @@ module.exports = function(grunt) {
 		}
 	}
 
-	var map_old_to_new_file_path = function( file_path ){
+	/**
+	 * Replaces filenames in the passed file_path with the filenames in the file_mappings.
+	 *
+	 * @param file_path The path to the file where the filenames should be replaced.
+	 * @param file_mappings The filenames to replace and the filenames they should be replaced with.
+	 */
+	var map_old_to_new_file_path = function( file_path, file_mappings ){
 		var body = grunt.file.read( file_path );
-		for ( var entry in file_mappings ) {
+		for ( var old_path in file_mappings ) {
+
+			// Ensure the
+			if ( ! file_mappings.hasOwnProperty( old_path ) ) {
+				continue;
+			}
+
 			// Regex to match the second filename of the diff header.
-			var headerRegex = new RegExp( "((diff \\-\\-git .* )(" + entry + ")(\\n))", "ig");
+			var header_regex = new RegExp( "((diff \\-\\-git .* )(" + old_path + ")(\\n))", "ig");
 
 			// Regex to match the old and new file name of the chunks within the diff.
-			var chunkFileNameRegex = new RegExp( "((-{3}|\\+{3})( " + entry + "))", "ig");
+			var chunk_filename_regex = new RegExp( "((-{3}|\\+{3})( " + old_path + "))", "ig");
 
 			// Escape slashes and periods in preparation for the regex replace.
-		    var escapedEntry = entry.replace( /\//g, "\\/" );
-			escapedEntry = escapedEntry.replace( /\./g, "\\." );
+			var escaped_entry = old_path.replace( /\//g, "\\/" );
+			escaped_entry = escaped_entry.replace( /\./g, "\\." );
 
-			var newBody = body.replace( chunkFileNameRegex, "$2 " + file_mappings[entry] );
+			var new_path = file_mappings[old_path];
+			var new_body = body.replace( chunk_filename_regex, "$2 " + new_path );
 
-			newBody = body.replace( headerRegex, "$2 " + file_mappings[entry] + "$4" );
+			new_body = body.replace( header_regex, "$2 " + new_path + "$4" );
 			// Logs the mapping.
-			if ( body !== newBody ) {
-				console.log("Old file path " + entry + " found. Replaced by " + file_mappings[entry] + ".");
+			if ( body !== new_body ) {
+				console.log("Old file path " + old_path + " found in patch. This path has been automatically replaced by " + new_path + ".");
 			}
 		}
 
-		grunt.file.write( file_path, newBody );
+		grunt.file.write( file_path, new_body );
 	};
 
 	function get_patch_from_ticket_number( patch_url, options  ){
@@ -468,7 +482,8 @@ module.exports = function(grunt) {
 			file_fail( done , 'local file fail' )
 		}
 	}
-	
+
+
 	grunt.registerTask( 'patch_wordpress', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
 		var done = this.async()
 		var options = this.options(defaults)

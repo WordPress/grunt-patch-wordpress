@@ -29,4 +29,12 @@ describe('grunt_patch_wordpress', function () {
 			done()
 		})
 	})
+
+	describe( 'map_old_to_new_file_path', function() {
+		it ( 'Replaces old file paths with new file paths in the diff', function(done) {
+			expect('a').to.equal('a');
+			done();
+		});
+
+	});
 })
