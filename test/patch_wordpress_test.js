@@ -25,7 +25,7 @@ describe('grunt_patch_wordpress', function () {
 
 		it ( '26602.2.diff is 0', function(done) {
 			var file = grunt.file.read( 'test/fixtures/26602.2.diff')
-			expect( patch.level_calculator( file ) ).to.equal( 0 )
+			expect( patch.is_ab( file ) ).to.be.false
 			done()
 		})
 	})

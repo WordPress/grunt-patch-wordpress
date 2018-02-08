@@ -65,7 +65,7 @@ describe( 'Patch helpers', function() {
 	it( 'core.svn.wordpress.org diffs from trunk should always be applied in the src folder', function(done){
 
 		expect( patch.move_to_src( coreTrunkSvn ) ).to.be.true
-		expect( patch.level_calculator( coreTrunkSvn ) ).to.equal( 1 )
+		expect( patch.is_ab( coreTrunkSvn ) ).to.be.true
 
 		done()
 	})

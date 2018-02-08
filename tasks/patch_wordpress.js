@@ -184,7 +184,7 @@ module.exports = function(grunt) {
 
 	function get_local_patch(patch_url) {
 		var body = grunt.file.read(patch_url)
-			, level = patch.level_calculator( body )
+			, level = patch.is_ab(body) ? 1 : 0
 			, move_to_src = patch.move_to_src( body )
 
 		grunt.file.copy(patch_url, temp_file)
@@ -195,7 +195,7 @@ module.exports = function(grunt) {
 		grunt.log.debug( 'getting patch: ' + patch_url )
 		request(patch_url, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
-				var level = patch.level_calculator( body )
+				var level = patch.is_ab(body) ? 1 : 0 
 					, move_to_src = patch.move_to_src( body )
 
 				grunt.file.write( temp_file, body)
