@@ -195,7 +195,7 @@ module.exports = function(grunt) {
 		grunt.log.debug( 'getting patch: ' + patch_url )
 		request(patch_url, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
-				var level = patch.is_ab(body) ? 1 : 0
+				var level = patch.is_ab(body) ? 1 : 0 
 					, move_to_src = patch.move_to_src( body )
 
 				grunt.file.write( temp_file, body)
