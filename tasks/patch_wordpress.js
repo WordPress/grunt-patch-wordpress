@@ -23,6 +23,7 @@ var request = require( 'request' )
 _.str = _.str = require('underscore.string')
 _.mixin( _.str.exports() )
 
+// todo: remove.
 var file_mappings_this_update = {
 	'src/wp-admin/js/accordion.js': 'src/js/_enqueues/lib/accordion.js',
 	'src/wp-admin/js/code-editor.js': 'src/js/_enqueues/wp/code-editor.js',
@@ -253,6 +254,7 @@ module.exports = function(grunt) {
 			grunt.log.debug( 'patch temp_file: ' + JSON.stringify( temp_file ) )
 
 			// Maps old file paths in patches to new file paths.
+			// todo: replace file_mappings with options.file_mappings
 			map_old_to_new_file_path( temp_file, file_mappings_this_update );
 
 			patchProcess = spawn( 'patch', patchArgs, patchOptions )
