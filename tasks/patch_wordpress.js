@@ -24,6 +24,7 @@ var request = require( 'request' )
 _.str = _.str = require('underscore.string')
 _.mixin( _.str.exports() )
 
+
 module.exports = function(grunt) {
 	var temp_file = 'wppatch.diff'
 		, defaults = {
