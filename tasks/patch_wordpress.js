@@ -289,7 +289,7 @@ module.exports = function(grunt) {
 
 			grunt.log.debug( 'github url detected: ' + patch_url )
 			if ( patch_url.slice( -5 ) !== '.diff' &&  patch_url.slice( -6 ) !== '.patch' ){
-				patch_url += '.diff';
+				patch_url += '.diff';	
 			}
 			get_patch( patch_url, options )
 
