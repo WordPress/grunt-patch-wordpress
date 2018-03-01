@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 
 	// Before generating any new files, remove any previously-created files.
 		clean: {
-			tests: ['temp'],
+			tests: ['tmp'],
 		},
 
 
@@ -68,7 +68,7 @@ module.exports = function(grunt) {
 	require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('tasks');
 
-	// Whenever the "test" task is run, first clean the "temp" dir, then run this
+	// Whenever the "test" task is run, first clean the "tmp" dir, then run this
 	// plugin's task(s), then test the result.
 	grunt.registerTask('test', ['jshint', 'clean', 'mochaTest']);
 
