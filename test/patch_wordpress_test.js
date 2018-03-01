@@ -33,81 +33,137 @@ describe('grunt_patch_wordpress', function () {
 
 	describe( 'map_old_to_new_file_path', function() {
 		var file_mappings = {
-			'src/wp-admin/js/color-picker.js': 'src/js/_enqueues/lib/color-picker.js'
+			'src/wp-admin/js/color-picker.js': 'src/js/_enqueues/lib/color-picker.js',
+			'wp-admin/js/color-picker.js': 'js/_enqueues/lib/color-picker.js'
 		};
 
-		it ( 'replaces old file paths with new file paths in the diff', function() {
-			grunt.file.copy( "./test/fixtures/patch_wordpress_1.diff", "./test/fixtures/patch_wordpress_1_copy.diff" );
-			map_old_to_new_file_path( "./test/fixtures/patch_wordpress_1_copy.diff", file_mappings );
+		describe('old to new', function () {
+			before(function () {
+				grunt.file.copy("./test/fixtures/patch_wordpress_1.diff", "./test/temp/patch_wordpress_1_copy.diff");
+				map_old_to_new_file_path("./test/temp/patch_wordpress_1_copy.diff", file_mappings);
+			});
 
-			var expected = grunt.file.read( "./test/expected/patch_wordpress_1.diff" );
-			var actual = grunt.file.read( "./test/fixtures/patch_wordpress_1_copy.diff" );
+			it('replaces old file paths with new file paths in the diff', function () {
+				var expected = grunt.file.read("./test/expected/patch_wordpress_1.diff");
+				var actual = grunt.file.read("./test/temp/patch_wordpress_1_copy.diff");
 
-			expect( actual ).to.equal( expected );
+				expect(actual).to.equal(expected);
+			});
 
-			grunt.file.delete( "./test/fixtures/patch_wordpress_1_copy.diff" );
+			after(function () {
+				grunt.file.delete("./test/temp/patch_wordpress_1_copy.diff");
+			});
 		});
 
-		it ( 'doesn\'t replace new file paths', function() {
-			grunt.file.copy( "./test/fixtures/patch_wordpress_2.diff", "./test/fixtures/patch_wordpress_2_copy.diff" );
-			map_old_to_new_file_path( "./test/fixtures/patch_wordpress_2_copy.diff", file_mappings );
+		describe('new stay unchanged', function () {
+			before(function () {
+				grunt.file.copy("./test/fixtures/patch_wordpress_2.diff", "./test/temp/patch_wordpress_2_copy.diff");
+				map_old_to_new_file_path("./test/temp/patch_wordpress_2_copy.diff", file_mappings);
+			});
 
-			var expected = grunt.file.read( "./test/expected/patch_wordpress_2.diff" );
-			var actual = grunt.file.read( "./test/fixtures/patch_wordpress_2_copy.diff" );
+			it('doesn\'t replace new file paths', function () {
+				var expected = grunt.file.read("./test/expected/patch_wordpress_2.diff");
+				var actual = grunt.file.read("./test/temp/patch_wordpress_2_copy.diff");
 
-			expect( actual ).to.equal( expected );
+				expect(actual).to.equal(expected);
+			});
 
-			grunt.file.delete( "./test/fixtures/patch_wordpress_2_copy.diff" );
+			after(function () {
+				grunt.file.delete("./test/temp/patch_wordpress_2_copy.diff");
+			});
 		});
 
-		it ( 'doesn\'t replace file paths that are not in the file mappings object', function() {
-			grunt.file.copy( "./test/fixtures/patch_wordpress_3.diff", "./test/fixtures/patch_wordpress_3_copy.diff" );
-			map_old_to_new_file_path( "./test/fixtures/patch_wordpress_3_copy.diff", file_mappings );
+		describe('unknown stay unchanged', function () {
+			before(function () {
+				grunt.file.copy("./test/fixtures/patch_wordpress_3.diff", "./test/temp/patch_wordpress_3_copy.diff");
+				map_old_to_new_file_path("./test/temp/patch_wordpress_3_copy.diff", file_mappings);
+			});
 
-			var expected = grunt.file.read( "./test/expected/patch_wordpress_3.diff" );
-			var actual = grunt.file.read( "./test/fixtures/patch_wordpress_3_copy.diff" );
+			it('doesn\'t replace file paths that are not in the file mappings object', function () {
+				var expected = grunt.file.read("./test/expected/patch_wordpress_3.diff");
+				var actual = grunt.file.read("./test/temp/patch_wordpress_3_copy.diff");
 
-			expect( actual ).to.equal( expected );
+				expect(actual).to.equal(expected);
+			});
 
-			grunt.file.delete( "./test/fixtures/patch_wordpress_3_copy.diff" );
+			after(function () {
+				grunt.file.delete("./test/temp/patch_wordpress_3_copy.diff");
+			});
 		});
 
-		it ( 'replaces old file paths with new file paths but doesn\'t replace file paths that are not ' +
-			'in the file mappings object in a diff file with multiple diffs', function() {
-			grunt.file.copy( "./test/fixtures/patch_wordpress_4.diff", "./test/fixtures/patch_wordpress_4_copy.diff" );
-			map_old_to_new_file_path( "./test/fixtures/patch_wordpress_4_copy.diff", file_mappings );
+		describe('new stay unchanged, old to new', function () {
+			before(function () {
+				grunt.file.copy("./test/fixtures/patch_wordpress_4.diff", "./test/temp/patch_wordpress_4_copy.diff");
+				map_old_to_new_file_path("./test/temp/patch_wordpress_4_copy.diff", file_mappings);
+			});
 
-			var expected = grunt.file.read( "./test/expected/patch_wordpress_4.diff" );
-			var actual = grunt.file.read( "./test/fixtures/patch_wordpress_4_copy.diff" );
+			it('replaces old file paths with new file paths but doesn\'t replace file paths that are not ' +
+				'in the file mappings object in a diff file with multiple diffs', function () {
+				var expected = grunt.file.read("./test/expected/patch_wordpress_4.diff");
+				var actual = grunt.file.read("./test/temp/patch_wordpress_4_copy.diff");
 
-			expect( actual ).to.equal( expected );
+				expect(actual).to.equal(expected);
+			});
 
-			grunt.file.delete( "./test/fixtures/patch_wordpress_4_copy.diff" );
+			after(function () {
+				grunt.file.delete("./test/temp/patch_wordpress_4_copy.diff");
+			});
 		});
 
-		it ( 'doesn\'t replaces new file paths and file paths that are not in the file mappings object in a diff file' +
-			' with multiple diffs', function() {
-			grunt.file.copy( "./test/fixtures/patch_wordpress_5.diff", "./test/fixtures/patch_wordpress_5_copy.diff" );
-			map_old_to_new_file_path( "./test/fixtures/patch_wordpress_5_copy.diff", file_mappings );
+		describe('new and unknown stay unchanged', function () {
+			before(function () {
+				grunt.file.copy("./test/fixtures/patch_wordpress_5.diff", "./test/temp/patch_wordpress_5_copy.diff");
+				map_old_to_new_file_path("./test/temp/patch_wordpress_5_copy.diff", file_mappings);
+			});
 
-			var expected = grunt.file.read( "./test/expected/patch_wordpress_5.diff" );
-			var actual = grunt.file.read( "./test/fixtures/patch_wordpress_5_copy.diff" );
+			it('doesn\'t replaces new file paths and file paths that are not in the file mappings object in a diff file' +
+				' with multiple diffs', function () {
+				var expected = grunt.file.read("./test/expected/patch_wordpress_5.diff");
+				var actual = grunt.file.read("./test/temp/patch_wordpress_5_copy.diff");
 
-			expect( actual ).to.equal( expected );
+				expect(actual).to.equal(expected);
+			});
 
-			grunt.file.delete( "./test/fixtures/patch_wordpress_5_copy.diff" );
+			after(function () {
+				grunt.file.delete("./test/temp/patch_wordpress_5_copy.diff");
+			});
 		});
 
-		it ( 'only replaces old file paths in a diff file with multiple diffs', function() {
-			grunt.file.copy( "./test/fixtures/patch_wordpress_6.diff", "./test/fixtures/patch_wordpress_6_copy.diff" );
-			map_old_to_new_file_path( "./test/fixtures/patch_wordpress_6_copy.diff", file_mappings );
+		describe('new and unknown stay unchanged, old to new', function () {
+			before(function () {
+				grunt.file.copy("./test/fixtures/patch_wordpress_6.diff", "./test/temp/patch_wordpress_6_copy.diff");
+				map_old_to_new_file_path("./test/temp/patch_wordpress_6_copy.diff", file_mappings);
+			});
 
-			var expected = grunt.file.read( "./test/expected/patch_wordpress_6.diff" );
-			var actual = grunt.file.read( "./test/fixtures/patch_wordpress_6_copy.diff" );
+			it('only replaces old file paths in a diff file with multiple diffs', function () {
+				var expected = grunt.file.read("./test/expected/patch_wordpress_6.diff");
+				var actual = grunt.file.read("./test/temp/patch_wordpress_6_copy.diff");
 
-			expect( actual ).to.equal( expected );
+				expect(actual).to.equal(expected);
+			});
 
-			grunt.file.delete( "./test/fixtures/patch_wordpress_6_copy.diff" );
+			after(function () {
+				grunt.file.delete("./test/temp/patch_wordpress_6_copy.diff");
+			});
+		});
+
+		// There is no src folder in core.
+		describe('non-src old to new', function () {
+			before(function () {
+				grunt.file.copy("./test/fixtures/patch_wordpress_7.diff", "./test/temp/patch_wordpress_7_copy.diff");
+				map_old_to_new_file_path("./test/temp/patch_wordpress_7_copy.diff", file_mappings);
+			});
+
+			it('replaces old file paths with new file paths in a diff with non-src file paths', function () {
+				var expected = grunt.file.read("./test/expected/patch_wordpress_7.diff");
+				var actual = grunt.file.read("./test/temp/patch_wordpress_7_copy.diff");
+
+				expect(actual).to.equal(expected);
+			});
+
+			after(function () {
+				grunt.file.delete("./test/temp/patch_wordpress_7_copy.diff");
+			});
 		});
 	});
-})
+});
