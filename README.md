@@ -51,6 +51,24 @@ After you've made changes to your local WordPress develop repository, you can up
 grunt upload_patch:2907
 ```
 
+## Using the file_mappings option
+If you'd like to map old file paths in your patch to new file paths during the patching process, you can pass a file mappings object as an option. Using this option can be helpful when the file paths in the project have been changed since you've created your patch.
+
+The file mappings object should contain old file paths and the corresponding new file paths. In the Gruntfile.js of your project, this would look like this:
+
+```
+patch: {
+	options: {
+		file_mappings: {
+			'old_path1': 'new_path1',
+			'old_path2': 'new_path2',
+			'old_path3': 'new_path3',
+		}
+	}
+}
+```
+ In this example, the patch task will look for 'old_path1', 'old_path2' and 'old_path3' in your patch and replace them during patching with 'new_path1', 'new_path2', and 'new_path3' respectively.
+
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
