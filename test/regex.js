@@ -7,7 +7,7 @@ var grunt = require( 'grunt' ),
 
 describe( 'regular expressions', function() {
 	it( 'multiple patches on a ticket with non patches as well', function( done ) {
-		var matches = regex.patch_attachments( html23988 ),
+		var matches = regex.patchAttachments( html23988 ),
 			longMatches = regex.longMatches( html23988 ),
 			possiblePatches = regex.possiblePatches( longMatches );
 
@@ -19,22 +19,22 @@ describe( 'regular expressions', function() {
 	});
 
 	it( 'one patch on a ticket', function( done ) {
-		var matches = regex.patch_attachments( html23994 );
+		var matches = regex.patchAttachments( html23994 );
 
 		expect( matches ).to.have.length( 1 );
 		done();
 	});
 
 	it( 'url from a list of attachments', function( done ) {
-		var matches = regex.patch_attachments( html23994 );
-		url = 'core.trac.wordpress.org' + regex.urls_from_attachment_list(   matches[0])[1];
+		var matches = regex.patchAttachments( html23994 );
+		url = 'core.trac.wordpress.org' + regex.urlsFromAttachmentList(   matches[0])[1];
 
 		expect( url ).to.be.equal( 'core.trac.wordpress.org/attachment/ticket/23994/23994.diff' );
 		done();
 	});
 
 	it( 'no patches on a ticket', function( done ) {
-		var matches = regex.patch_attachments( html23989 );
+		var matches = regex.patchAttachments( html23989 );
 
 		expect( matches ).to.be.null;
 		done();
@@ -43,7 +43,7 @@ describe( 'regular expressions', function() {
 	it( 'filenames should be cleaned', function( done ) {
 		var filename = '?       one.diff';
 
-		expect( regex.local_file_clean( filename ) ).to.equal( 'one.diff' );
+		expect( regex.localFileClean( filename ) ).to.equal( 'one.diff' );
 		done();
 	});
 });

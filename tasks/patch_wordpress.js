@@ -19,7 +19,7 @@ var request = require( 'request' ),
 	patch = require( '../lib/patch.js' ),
 	regex = require( '../lib/regex.js' ),
 	xmlrpc = require( 'xmlrpc' ),
-	mapOldToNewFilePath = require( '../lib/mapOldToNewFilePath.js' );
+	mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
 
 _.str = _.str = require( 'underscore.string' );
 _.mixin( _.str.exports() );
@@ -149,13 +149,13 @@ module.exports = function( grunt ) {
 		grunt.log.debug( 'getPatchFromTicket: ' + patchUrl );
 		request( patchUrl, function( error, response, body ) {
 			if ( ! error && 200 == response.statusCode ) {
-				matches = regex.patch_attachments( body );
+				matches = regex.patchAttachments( body );
 				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) );
 
 				if ( null == matches ) {
 					grunt.event.emit( 'fileFail', patchUrl + '\ncontains no attachments' );
 				} else if ( 1 === matches.length ) {
-					matchUrl = options.tracUrl + regex.urls_from_attachment_list(   matches[0])[1];
+					matchUrl = options.tracUrl + regex.urlsFromAttachmentList(   matches[0])[1];
 					getPatch( trac.convert_to_raw ( url.parse( 'https://' + matchUrl  ) ), options  );
 				} else {
 					longMatches = regex.longMatches( body );
@@ -175,7 +175,7 @@ module.exports = function( grunt ) {
 					], function( answers ) {
 						grunt.log.debug( 'answers:' + JSON.stringify( answers ) );
 						matchUrl = options.tracUrl +
-						regex.urls_from_attachment_list( matches[ _.indexOf( possiblePatches, answers.patch_name ) ])[1];
+						regex.urlsFromAttachmentList( matches[ _.indexOf( possiblePatches, answers.patch_name ) ])[1];
 						getPatch( trac.convert_to_raw ( url.parse( 'https://' + matchUrl  ) ), options  );
 
 					});
@@ -192,7 +192,7 @@ module.exports = function( grunt ) {
 
 	function getLocalPatch( patchUrl ) {
 		var body = grunt.file.read( patchUrl ),
-			level = patch.is_ab( body ) ? 1 : 0,
+			level = patch.isAb( body ) ? 1 : 0,
 			moveToSrc = patch.moveToSrc( body );
 
 		grunt.file.copy( patchUrl, tempFile );
@@ -203,7 +203,7 @@ module.exports = function( grunt ) {
 		grunt.log.debug( 'getting patch: ' + patchUrl );
 		request( patchUrl, function( error, response, body ) {
 			if ( ! error && 200 == response.statusCode ) {
-				const level = patch.is_ab( body ) ? 1 : 0;
+				const level = patch.isAb( body ) ? 1 : 0;
 				const moveToSrc = patch.moveToSrc( body );
 
 				grunt.file.write( tempFile, body );
@@ -248,7 +248,7 @@ module.exports = function( grunt ) {
 			if ( 0 === files.length ) {
 				fileFail( done );
 			} else if ( 1 === files.length ) {
-				applyPatch( regex.localFile_clean( files[0]), done, options );
+				applyPatch( regex.localFileClean( files[0]), done, options );
 			} else {
 				inquirer.prompt([
 					{	type: 'list',
@@ -257,7 +257,7 @@ module.exports = function( grunt ) {
 						choices: files
 					}
 				], function( answers ) {
-					var file = regex.localFile_clean( answers.file );
+					var file = regex.localFileClean( answers.file );
 					applyPatch( file, done, options );
 				});
 			}

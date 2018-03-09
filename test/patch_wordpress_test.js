@@ -5,7 +5,7 @@ var grunt = require( 'grunt' ),
 	url = require( 'url' ),
 	expect = require( 'chai' ).expect,
 	trac = require( '../lib/trac.js' ),
-	mapOldToNewFilePath = require( '../lib/mapOldToNewFilePath.js' );
+	mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
 
 describe( 'grunt_patch_wordpress', function() {
 	describe( 'sanity checks', function() {
@@ -16,8 +16,8 @@ describe( 'grunt_patch_wordpress', function() {
 
 	});
 
-	it( 'convert_to_raw converts urls', function( done ) {
-		expect( trac.convert_to_raw ( url.parse( 'https://core.trac.wordpress.org/attachment/ticket/26700/26700.diff'  ) ) ).to.equal( 'https://core.trac.wordpress.org/raw-attachment/ticket/26700/26700.diff' );
+	it( 'convertToRaw converts urls', function( done ) {
+		expect( trac.convertToRaw ( url.parse( 'https://core.trac.wordpress.org/attachment/ticket/26700/26700.diff'  ) ) ).to.equal( 'https://core.trac.wordpress.org/raw-attachment/ticket/26700/26700.diff' );
 		done();
 	});
 
@@ -27,7 +27,7 @@ describe( 'grunt_patch_wordpress', function() {
 
 		it ( '26602.2.diff is 0', function( done ) {
 			var file = grunt.file.read( 'test/fixtures/26602.2.diff' );
-			expect( patch.is_ab( file ) ).to.be.false;
+			expect( patch.isAb( file ) ).to.be.false;
 			done();
 		});
 	});
