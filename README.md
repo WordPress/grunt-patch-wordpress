@@ -70,7 +70,11 @@ patch: {
  In this example, the patch task will look for 'old_path1', 'old_path2' and 'old_path3' in your patch and replace them during patching with 'new_path1', 'new_path2', and 'new_path3' respectively.
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
+
+Please follow the [WordPress coding standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/javascript/).
+
+* Add unit tests and documentation for any new or changed functionality.
+* Lint and test your code using `npm run lint` and `npm run test`.
 
 ## Release History
 
