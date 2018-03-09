@@ -24,7 +24,7 @@
     "test": "mocha",
     "test:coverage": "nyc mocha",
     "test:watch": "mocha -w",
-    "lint": "eslint .",
+    "lint": "eslint . --ignore-path coverage",
     "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
