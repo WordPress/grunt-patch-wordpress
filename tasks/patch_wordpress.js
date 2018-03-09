@@ -19,6 +19,7 @@ var request = require( 'request' )
 	, patch = require( '../lib/patch.js' )
 	, regex = require( '../lib/regex.js' )
 	, xmlrpc = require('xmlrpc')
+	, map_old_to_new_file_path = require( '../lib/map_old_to_new_file_path.js' )
 
 _.str = _.str = require('underscore.string')
 _.mixin( _.str.exports() )
@@ -66,6 +67,11 @@ module.exports = function(grunt) {
 			grunt.log.debug( 'patch options: ' + JSON.stringify( patchOptions ) )
 			grunt.log.debug( 'patch arguments: ' + JSON.stringify( patchArgs ) )
 			grunt.log.debug( 'patch temp_file: ' + JSON.stringify( temp_file ) )
+
+			// Maps old file paths in patches to new file paths.
+			if ( options.file_mappings ) {
+				map_old_to_new_file_path( temp_file, options.file_mappings );
+			}
 
 			patchProcess = spawn( 'patch', patchArgs, patchOptions )
 
