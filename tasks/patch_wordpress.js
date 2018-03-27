@@ -115,7 +115,7 @@ module.exports = function( grunt ) {
 
 		// if patchUrl is full url and is an attachment, convert it to a raw attachment
 		} else if ( parsedUrl.hostname === options.tracUrl && parsedUrl.pathname.match( /attachment/ ) && parsedUrl.pathname.match( /(patch|diff)/ ) ) {
-			getPatch( trac.convert_to_raw ( parsedUrl, options ) );
+			getPatch( trac.convertToRaw ( parsedUrl, options ) );
 
 		// if patchUrl is just a ticket number, get a list of patches on that ticket and allow user to choose one
 		} else if (  parsedUrl.hostname === options.tracUrl && parsedUrl.pathname.match( /ticket/ ) ) {
@@ -156,7 +156,7 @@ module.exports = function( grunt ) {
 					grunt.event.emit( 'fileFail', patchUrl + '\ncontains no attachments' );
 				} else if ( 1 === matches.length ) {
 					matchUrl = options.tracUrl + regex.urlsFromAttachmentList(   matches[0])[1];
-					getPatch( trac.convert_to_raw ( url.parse( 'https://' + matchUrl  ) ), options  );
+					getPatch( trac.convertToRaw ( url.parse( 'https://' + matchUrl  ) ), options  );
 				} else {
 					longMatches = regex.longMatches( body );
 					possiblePatches = regex.possiblePatches( longMatches );
@@ -176,7 +176,7 @@ module.exports = function( grunt ) {
 						grunt.log.debug( 'answers:' + JSON.stringify( answers ) );
 						matchUrl = options.tracUrl +
 						regex.urlsFromAttachmentList( matches[ _.indexOf( possiblePatches, answers.patch_name ) ])[1];
-						getPatch( trac.convert_to_raw ( url.parse( 'https://' + matchUrl  ) ), options  );
+						getPatch( trac.convertToRaw ( url.parse( 'https://' + matchUrl  ) ), options  );
 
 					});
 				}
