@@ -172,7 +172,7 @@ module.exports = function( grunt ) {
 							// preselect the most recent patch
 							default: possiblePatches.length - 1
 						}
-					], function( answers ) {
+					]).then(  answers => {
 						grunt.log.debug( 'answers:' + JSON.stringify( answers ) );
 						matchUrl = options.tracUrl +
 						regex.urlsFromAttachmentList( matches[ _.indexOf( possiblePatches, answers.patch_name ) ])[1];
@@ -256,7 +256,7 @@ module.exports = function( grunt ) {
 						message: 'Please select a file to apply',
 						choices: files
 					}
-				], function( answers ) {
+				]).then( answers => {
 					var file = regex.localFileClean( answers.file );
 					applyPatch( file, done, options );
 				});
@@ -345,10 +345,9 @@ module.exports = function( grunt ) {
 			[
 				{ type: 'input', name: 'username', message: 'Enter your WordPress.org username' },
 				{ type: 'password', name: 'password', message: 'Enter your WordPress.org password' }
-			],
-			function( answers ) {
-				uploadPatchWithCredentials( answers.username, answers.password );
-			}
+			]).then(  answers => {
+			uploadPatchWithCredentials( answers.username, answers.password );
+		}
 		);
 	});
 
