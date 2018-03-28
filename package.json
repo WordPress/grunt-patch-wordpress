@@ -1,8 +1,8 @@
 {
   "name": "grunt-patch-wordpress",
   "description": "Patch your core WordPress",
-  "version": "0.4.2",
-  "homepage": "https://github.com/aaronjorbin/grunt-patch-wordpress",
+  "version": "1.0.0",
+  "homepage": "https://github.com/wordpress/grunt-patch-wordpress",
   "author": {
     "name": "Aaron Jorbin",
     "email": "aaron@jorb.in",
@@ -10,10 +10,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/aaronjorbin/grunt-patch-wordpress.git"
+    "url": "git://github.com/wordpress/grunt-patch-wordpress.git"
   },
   "bugs": {
-    "url": "https://github.com/aaronjorbin/grunt-patch-wordpress/issues"
+    "url": "https://github.com/wordpress/grunt-patch-wordpress/issues"
   },
   "license": "MIT",
   "main": "Gruntfile.js",
