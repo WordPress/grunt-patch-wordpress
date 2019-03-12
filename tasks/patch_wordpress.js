@@ -21,9 +21,6 @@ const regex = require( '../lib/regex.js' );
 const xmlrpc = require( 'xmlrpc' );
 const mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
 
-_.str = _.str = require( 'underscore.string' );
-_.mixin( _.str.exports() );
-
 module.exports = function( grunt ) {
 	let tempFile = 'wppatch.diff';
 	const defaults = {
@@ -233,9 +230,9 @@ module.exports = function( grunt ) {
 
 	function localFile( error, result, code, done, options ) {
 		if ( ! error ) {
-			const files = _.filter( result.split( '\n' ), ( file ) => {
-				return ( _.str.include( file, 'patch' ) || _.str.include( file, 'diff' ) );
-			} );
+			const files = result.split( '\n' ).filter( ( file ) => (
+				file.includes( 'patch' ) || file.includes( 'diff' )
+			) );
 			grunt.log.debug( 'files: ' + JSON.stringify( files ) );
 
 			if ( 0 === files.length ) {
