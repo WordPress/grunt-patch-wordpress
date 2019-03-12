@@ -28,7 +28,9 @@
     "lint:fix": "eslint . --fix"
   },
   "jest": {
-    "testMatch": [ "**/test/**/*.js" ]
+    "testMatch": [
+      "**/test/**/*.js"
+    ]
   },
   "devDependencies": {
     "eslint": "^4.17.0",
