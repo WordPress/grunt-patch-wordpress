@@ -8,8 +8,8 @@
  * Licensed under the MIT license.
  */
 
-var request = require( 'request' ),
-	exec =  require( 'child_process' ).exec,
+const request = require( 'request' ),
+	exec = require( 'child_process' ).exec,
 	spawn = require( 'child_process' ).spawn,
 	inquirer = require( 'inquirer' ),
 	url = require( 'url' ),
@@ -24,13 +24,11 @@ var request = require( 'request' ),
 _.str = _.str = require( 'underscore.string' );
 _.mixin( _.str.exports() );
 
-
 module.exports = function( grunt ) {
-	var tempFile = 'wppatch.diff',
+	let tempFile = 'wppatch.diff',
 		defaults = {
-			tracUrl: 'core.trac.wordpress.org'
+			tracUrl: 'core.trac.wordpress.org',
 		};
-
 
 	function isSvn() {
 		return fs.existsSync( '.svn' );
@@ -46,7 +44,7 @@ module.exports = function( grunt ) {
 
 		// What to do when either our patch is ready
 		grunt.event.once( 'fileReady', function( level, moveToSrc ) {
-			var patchOptions = {},
+			let patchOptions = {},
 				patchArgs = [],
 				patchProcess;
 
@@ -56,7 +54,7 @@ module.exports = function( grunt ) {
 
 			// Decide if we need to be in src
 			if ( moveToSrc ) {
-				patchOptions.cwd =  workingDir() + '/src';
+				patchOptions.cwd = workingDir() + '/src';
 				tempFile = workingDir() + '/' + tempFile;
 			}
 
@@ -88,8 +86,8 @@ module.exports = function( grunt ) {
 				}
 
 				done( code );
-			});
-		});
+			} );
+		} );
 
 		// or we know we have failed
 		grunt.event.once( 'fileFail', function( msg ) {
@@ -98,13 +96,12 @@ module.exports = function( grunt ) {
 			}
 
 			done( false );
-		});
+		} );
 
 		// if patchUrl is a github url
 		if ( 'github.com' === parsedUrl.hostname ) {
-
 			grunt.log.debug( 'github url detected: ' + patchUrl );
-			if ( '.diff' !== patchUrl.slice( -5 ) &&  '.patch' !== patchUrl.slice( -6 ) ) {
+			if ( '.diff' !== patchUrl.slice( -5 ) && '.patch' !== patchUrl.slice( -6 ) ) {
 				patchUrl += '.diff';
 			}
 			getPatch( patchUrl, options );
@@ -115,10 +112,10 @@ module.exports = function( grunt ) {
 
 		// if patchUrl is full url and is an attachment, convert it to a raw attachment
 		} else if ( parsedUrl.hostname === options.tracUrl && parsedUrl.pathname.match( /attachment/ ) && parsedUrl.pathname.match( /(patch|diff)/ ) ) {
-			getPatch( trac.convertToRaw ( parsedUrl, options ) );
+			getPatch( trac.convertToRaw( parsedUrl, options ) );
 
 		// if patchUrl is just a ticket number, get a list of patches on that ticket and allow user to choose one
-		} else if (  parsedUrl.hostname === options.tracUrl && parsedUrl.pathname.match( /ticket/ ) ) {
+		} else if ( parsedUrl.hostname === options.tracUrl && parsedUrl.pathname.match( /ticket/ ) ) {
 			getPatchFromTicket( patchUrl, options );
 
 		// if we just enter a number, assume it is a ticket number
@@ -135,13 +132,13 @@ module.exports = function( grunt ) {
 		}
 	}
 
-	function getPatchFromTicketNumber( patchUrl, options  ) {
+	function getPatchFromTicketNumber( patchUrl, options ) {
 		grunt.log.debug( 'getPatchFromTicketNumber: ' + patchUrl );
-		getPatchFromTicket( 'https://' + options.tracUrl + '/attachment/ticket/' + patchUrl + '/', options  );
+		getPatchFromTicket( 'https://' + options.tracUrl + '/attachment/ticket/' + patchUrl + '/', options );
 	}
 
 	function getPatchFromTicket( patchUrl, options ) {
-		var matches,
+		let matches,
 			longMatches,
 			matchUrl,
 			possiblePatches;
@@ -155,43 +152,41 @@ module.exports = function( grunt ) {
 				if ( null == matches ) {
 					grunt.event.emit( 'fileFail', patchUrl + '\ncontains no attachments' );
 				} else if ( 1 === matches.length ) {
-					matchUrl = options.tracUrl + regex.urlsFromAttachmentList(   matches[0])[1];
-					getPatch( trac.convertToRaw ( url.parse( 'https://' + matchUrl  ) ), options  );
+					matchUrl = options.tracUrl + regex.urlsFromAttachmentList( matches[ 0 ] )[ 1 ];
+					getPatch( trac.convertToRaw( url.parse( 'https://' + matchUrl ) ), options );
 				} else {
 					longMatches = regex.longMatches( body );
 					possiblePatches = regex.possiblePatches( longMatches );
 
 					grunt.log.debug( 'possiblePatches: ' + JSON.stringify( possiblePatches ) );
 					grunt.log.debug( 'longMatches: ' + JSON.stringify( longMatches ) );
-					inquirer.prompt([
+					inquirer.prompt( [
 						{	type: 'list',
 							name: 'patch_name',
 							message: 'Please select a patch to apply',
 							choices: possiblePatches,
 
 							// preselect the most recent patch
-							default: possiblePatches.length - 1
-						}
-					]).then(  answers => {
+							default: possiblePatches.length - 1,
+						},
+					] ).then( ( answers ) => {
 						grunt.log.debug( 'answers:' + JSON.stringify( answers ) );
 						matchUrl = options.tracUrl +
-						regex.urlsFromAttachmentList( matches[ _.indexOf( possiblePatches, answers.patch_name ) ])[1];
-						getPatch( trac.convertToRaw ( url.parse( 'https://' + matchUrl  ) ), options  );
-
-					});
+						regex.urlsFromAttachmentList( matches[ _.indexOf( possiblePatches, answers.patch_name ) ] )[ 1 ];
+						getPatch( trac.convertToRaw( url.parse( 'https://' + matchUrl ) ), options );
+					} );
 				}
 			} else {
-
 				// something went wrong
 				grunt.event.emit( 'fileFail', 'getPatchFromTicket fail \n status: ' + response.statusCode );
 			}
-		});
+		} );
 
 		grunt.event.emit( 'fileFile', 'method not available yet' );
 	}
 
 	function getLocalPatch( patchUrl ) {
-		var body = grunt.file.read( patchUrl ),
+		const body = grunt.file.read( patchUrl ),
 			level = patch.isAb( body ) ? 1 : 0,
 			moveToSrc = patch.moveToSrc( body );
 
@@ -209,11 +204,10 @@ module.exports = function( grunt ) {
 				grunt.file.write( tempFile, body );
 				grunt.event.emit( 'fileReady', level, moveToSrc );
 			} else {
-
 				// something went wrong
 				grunt.event.emit( 'fileFail', 'getPatch_fail \n status: ' + response.statusCode );
 			}
-		});
+		} );
 	}
 
 	function fileFail( done, msg ) {
@@ -231,7 +225,7 @@ module.exports = function( grunt ) {
 		grunt.log.errorlns( '4) enter a patch url, e.g. grunt patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff' );
 		grunt.log.errorlns( '' );
 
-		if ( 'string' === typeof( msg ) ) {
+		if ( 'string' === typeof ( msg ) ) {
 			grunt.verbose.errorlns( 'msg: ' + msg );
 		}
 
@@ -242,34 +236,33 @@ module.exports = function( grunt ) {
 		if ( ! error ) {
 			files = _.filter( result.split( '\n' ), function( file ) {
 				return ( _.str.include( file, 'patch' ) || _.str.include( file, 'diff' ) );
-			});
+			} );
 			grunt.log.debug( 'files: ' + JSON.stringify( files ) );
 
 			if ( 0 === files.length ) {
 				fileFail( done );
 			} else if ( 1 === files.length ) {
-				applyPatch( regex.localFileClean( files[0]), done, options );
+				applyPatch( regex.localFileClean( files[ 0 ] ), done, options );
 			} else {
-				inquirer.prompt([
+				inquirer.prompt( [
 					{	type: 'list',
 						name: 'file',
 						message: 'Please select a file to apply',
-						choices: files
-					}
-				]).then( answers => {
-					var file = regex.localFileClean( answers.file );
+						choices: files,
+					},
+				] ).then( ( answers ) => {
+					const file = regex.localFileClean( answers.file );
 					applyPatch( file, done, options );
-				});
+				} );
 			}
 		} else {
 			fileFail( done, 'local file fail' );
 		}
 	}
 
-
 	grunt.registerTask( 'patch_wordpress', 'Patch your develop-wordpress directory like a boss', function( ticket, afterProtocal ) {
-		var done = this.async();
-		var options = this.options( defaults );
+		const done = this.async();
+		const options = this.options( defaults );
 
 		// since URLs contain a : which is the seperator for grunt, we
 		// need to reassemble the url.
@@ -281,7 +274,6 @@ module.exports = function( grunt ) {
 		grunt.log.debug( 'options: ' + JSON.stringify( options ) );
 
 		if ( 'undefined' === typeof ticket ) {
-
 			// look for diffs and patches in the root of the checkout and
 			// prompt using inquirer to pick one
 
@@ -289,39 +281,37 @@ module.exports = function( grunt ) {
 
 			exec( fileFinderCommand, function( error, result, code ) {
 				localFile( error, result, code, done, options );
-			});
+			} );
 		} else {
 			applyPatch( ticket, done, options );
-
 		}
-
-	});
+	} );
 
 	grunt.registerTask( 'upload_patch', 'Upload the current diff of your develop-wordpress directory to Trac', function( ticketNumber ) {
-		var done = this.async();
-		var options = this.options( defaults );
+		const done = this.async();
+		const options = this.options( defaults );
 
 		grunt.log.debug( 'ticketNumber: ' + ticketNumber );
 		grunt.log.debug( 'options: ' + JSON.stringify( options ) );
 
 		ticketNumber = parseInt( ticketNumber, 10 );
-		if ( 'number' != typeof ticketNumber ) {
+		if ( 'number' !== typeof ticketNumber ) {
 			grunt.fail.warn( 'A ticket number is required to upload a patch.' );
 		}
 
 		const uploadPatchWithCredentials = function( username, password ) {
-			var diffCommand = isSvn() ? 'svn diff --diff-cmd diff' : 'git diff';
+			const diffCommand = isSvn() ? 'svn diff --diff-cmd diff' : 'git diff';
 
 			exec( diffCommand, function( error, result, code ) {
-				var client = xmlrpc.createSecureClient({
+				const client = xmlrpc.createSecureClient( {
 					hostname: options.tracUrl,
 					port: 443,
 					path: '/login/xmlrpc',
 					basic_auth: { // eslint-disable-line camelcase
 						user: username,
-						pass: password
-					}
-				});
+						pass: password,
+					},
+				} );
 				client.methodCall(
 					'ticket.putAttachment',
 					[
@@ -329,7 +319,7 @@ module.exports = function( grunt ) {
 						ticketNumber + '.diff',
 						'', // description. empty for now.
 						new Buffer( new Buffer( result ).toString( 'base64' ), 'base64' ),
-						false // never overwrite the old file
+						false, // never overwrite the old file
 					], function( err, value ) {
 						if ( null === err ) {
 							grunt.log.writeln( 'Uploaded patch.' );
@@ -339,16 +329,15 @@ module.exports = function( grunt ) {
 						}
 					}
 				);
-			});
+			} );
 		};
 		inquirer.prompt(
 			[
 				{ type: 'input', name: 'username', message: 'Enter your WordPress.org username' },
-				{ type: 'password', name: 'password', message: 'Enter your WordPress.org password' }
-			]).then(  answers => {
+				{ type: 'password', name: 'password', message: 'Enter your WordPress.org password' },
+			] ).then( ( answers ) => {
 			uploadPatchWithCredentials( answers.username, answers.password );
 		}
 		);
-	});
-
+	} );
 };
