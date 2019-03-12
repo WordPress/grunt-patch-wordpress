@@ -8,26 +8,23 @@ var grunt = require( 'grunt' ),
 
 describe( 'grunt_patch_wordpress', function() {
 	describe( 'sanity checks', function() {
-		it( 'a is a', function( done ) {
+		it( 'a is a', function() {
 			expect( 'a' ).toEqual( 'a' );
-			done();
 		});
 
 	});
 
-	it( 'convertToRaw converts urls', function( done ) {
+	it( 'convertToRaw converts urls', function() {
 		expect( trac.convertToRaw ( url.parse( 'https://core.trac.wordpress.org/attachment/ticket/26700/26700.diff'  ) ) ).toEqual( 'https://core.trac.wordpress.org/raw-attachment/ticket/26700/26700.diff' );
-		done();
 	});
 
 	describe( 'Level Calculator', function() {
 
 		// @TODO: Find alot of patches to use here
 
-		it ( '26602.2.diff is 0', function( done ) {
+		it ( '26602.2.diff is 0', function() {
 			var file = grunt.file.read( 'test/fixtures/26602.2.diff' );
 			expect( patch.isAb( file ) ).toBe( false );
-			done();
 		});
 	});
 
