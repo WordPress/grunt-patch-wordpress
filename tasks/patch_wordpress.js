@@ -8,27 +8,27 @@
  * Licensed under the MIT license.
  */
 
-const request = require( 'request' ),
-	exec = require( 'child_process' ).exec,
-	spawn = require( 'child_process' ).spawn,
-	inquirer = require( 'inquirer' ),
-	url = require( 'url' ),
-	fs = require( 'fs' ),
-	_ = require( 'underscore' ),
-	trac = require( '../lib/trac.js' ),
-	patch = require( '../lib/patch.js' ),
-	regex = require( '../lib/regex.js' ),
-	xmlrpc = require( 'xmlrpc' ),
-	mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
+const request = require( 'request' );
+const exec = require( 'child_process' ).exec;
+const spawn = require( 'child_process' ).spawn;
+const inquirer = require( 'inquirer' );
+const url = require( 'url' );
+const fs = require( 'fs' );
+const _ = require( 'underscore' );
+const trac = require( '../lib/trac.js' );
+const patch = require( '../lib/patch.js' );
+const regex = require( '../lib/regex.js' );
+const xmlrpc = require( 'xmlrpc' );
+const mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
 
 _.str = _.str = require( 'underscore.string' );
 _.mixin( _.str.exports() );
 
 module.exports = function( grunt ) {
-	let tempFile = 'wppatch.diff',
-		defaults = {
-			tracUrl: 'core.trac.wordpress.org',
-		};
+	let tempFile = 'wppatch.diff';
+	const defaults = {
+		tracUrl: 'core.trac.wordpress.org',
+	};
 
 	function isSvn() {
 		return fs.existsSync( '.svn' );
@@ -40,13 +40,12 @@ module.exports = function( grunt ) {
 
 	function applyPatch( patchUrl, done, options ) {
 		grunt.verbose.write( patchUrl );
-		parsedUrl = url.parse( patchUrl );
+		const parsedUrl = url.parse( patchUrl );
 
 		// What to do when either our patch is ready
 		grunt.event.once( 'fileReady', function( level, moveToSrc ) {
-			let patchOptions = {},
-				patchArgs = [],
-				patchProcess;
+			const patchOptions = {};
+			const patchArgs = [];
 
 			// Set patch process to use the existing I/O streams, which will output
 			// the command's results and allow for user input on patch error
@@ -71,7 +70,7 @@ module.exports = function( grunt ) {
 				mapOldToNewFilePath( tempFile, options.file_mappings );
 			}
 
-			patchProcess = spawn( 'patch', patchArgs, patchOptions );
+			const patchProcess = spawn( 'patch', patchArgs, patchOptions );
 
 			patchProcess.on( 'exit', function( code, signal ) {
 				if ( signal ) {
@@ -145,11 +144,11 @@ module.exports = function( grunt ) {
 
 		grunt.log.debug( 'getPatchFromTicket: ' + patchUrl );
 		request( patchUrl, function( error, response, body ) {
-			if ( ! error && 200 == response.statusCode ) {
+			if ( ! error && 200 === response.statusCode ) {
 				matches = regex.patchAttachments( body );
 				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) );
 
-				if ( null == matches ) {
+				if ( null === matches ) {
 					grunt.event.emit( 'fileFail', patchUrl + '\ncontains no attachments' );
 				} else if ( 1 === matches.length ) {
 					matchUrl = options.tracUrl + regex.urlsFromAttachmentList( matches[ 0 ] )[ 1 ];
@@ -197,7 +196,7 @@ module.exports = function( grunt ) {
 	function getPatch( patchUrl ) {
 		grunt.log.debug( 'getting patch: ' + patchUrl );
 		request( patchUrl, function( error, response, body ) {
-			if ( ! error && 200 == response.statusCode ) {
+			if ( ! error && 200 === response.statusCode ) {
 				const level = patch.isAb( body ) ? 1 : 0;
 				const moveToSrc = patch.moveToSrc( body );
 
@@ -234,7 +233,7 @@ module.exports = function( grunt ) {
 
 	function localFile( error, result, code, done, options ) {
 		if ( ! error ) {
-			files = _.filter( result.split( '\n' ), function( file ) {
+			const files = _.filter( result.split( '\n' ), function( file ) {
 				return ( _.str.include( file, 'patch' ) || _.str.include( file, 'diff' ) );
 			} );
 			grunt.log.debug( 'files: ' + JSON.stringify( files ) );
@@ -302,7 +301,7 @@ module.exports = function( grunt ) {
 		const uploadPatchWithCredentials = function( username, password ) {
 			const diffCommand = isSvn() ? 'svn diff --diff-cmd diff' : 'git diff';
 
-			exec( diffCommand, function( error, result, code ) {
+			exec( diffCommand, function( error, result ) {
 				const client = xmlrpc.createSecureClient( {
 					hostname: options.tracUrl,
 					port: 443,
@@ -320,7 +319,7 @@ module.exports = function( grunt ) {
 						'', // description. empty for now.
 						new Buffer( new Buffer( result ).toString( 'base64' ), 'base64' ),
 						false, // never overwrite the old file
-					], function( err, value ) {
+					], function( err ) {
 						if ( null === err ) {
 							grunt.log.writeln( 'Uploaded patch.' );
 							done();
