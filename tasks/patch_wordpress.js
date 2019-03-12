@@ -43,7 +43,7 @@ module.exports = function( grunt ) {
 		const parsedUrl = url.parse( patchUrl );
 
 		// What to do when either our patch is ready
-		grunt.event.once( 'fileReady', function( level, moveToSrc ) {
+		grunt.event.once( 'fileReady', ( level, moveToSrc ) => {
 			const patchOptions = {};
 			const patchArgs = [];
 
@@ -72,7 +72,7 @@ module.exports = function( grunt ) {
 
 			const patchProcess = spawn( 'patch', patchArgs, patchOptions );
 
-			patchProcess.on( 'exit', function( code, signal ) {
+			patchProcess.on( 'exit', ( code, signal ) => {
 				if ( signal ) {
 					grunt.log.debug( 'error signal: ' + signal );
 				}
@@ -89,7 +89,7 @@ module.exports = function( grunt ) {
 		} );
 
 		// or we know we have failed
-		grunt.event.once( 'fileFail', function( msg ) {
+		grunt.event.once( 'fileFail', ( msg ) => {
 			if ( 'string' === typeof msg ) {
 				grunt.log.errorlns( msg );
 			}
@@ -143,7 +143,7 @@ module.exports = function( grunt ) {
 		let possiblePatches;
 
 		grunt.log.debug( 'getPatchFromTicket: ' + patchUrl );
-		request( patchUrl, function( error, response, body ) {
+		request( patchUrl, ( error, response, body ) => {
 			if ( ! error && 200 === response.statusCode ) {
 				matches = regex.patchAttachments( body );
 				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) );
@@ -195,7 +195,7 @@ module.exports = function( grunt ) {
 
 	function getPatch( patchUrl ) {
 		grunt.log.debug( 'getting patch: ' + patchUrl );
-		request( patchUrl, function( error, response, body ) {
+		request( patchUrl, ( error, response, body ) => {
 			if ( ! error && 200 === response.statusCode ) {
 				const level = patch.isAb( body ) ? 1 : 0;
 				const moveToSrc = patch.moveToSrc( body );
@@ -233,7 +233,7 @@ module.exports = function( grunt ) {
 
 	function localFile( error, result, code, done, options ) {
 		if ( ! error ) {
-			const files = _.filter( result.split( '\n' ), function( file ) {
+			const files = _.filter( result.split( '\n' ), ( file ) => {
 				return ( _.str.include( file, 'patch' ) || _.str.include( file, 'diff' ) );
 			} );
 			grunt.log.debug( 'files: ' + JSON.stringify( files ) );
@@ -278,7 +278,7 @@ module.exports = function( grunt ) {
 
 			const fileFinderCommand = isSvn() ? 'svn status ' : 'git ls-files --other --exclude-standard';
 
-			exec( fileFinderCommand, function( error, result, code ) {
+			exec( fileFinderCommand, ( error, result, code ) => {
 				localFile( error, result, code, done, options );
 			} );
 		} else {
@@ -301,7 +301,7 @@ module.exports = function( grunt ) {
 		const uploadPatchWithCredentials = function( username, password ) {
 			const diffCommand = isSvn() ? 'svn diff --diff-cmd diff' : 'git diff';
 
-			exec( diffCommand, function( error, result ) {
+			exec( diffCommand, ( error, result ) => {
 				const client = xmlrpc.createSecureClient( {
 					hostname: options.tracUrl,
 					port: 443,
@@ -319,7 +319,7 @@ module.exports = function( grunt ) {
 						'', // description. empty for now.
 						new Buffer( new Buffer( result ).toString( 'base64' ), 'base64' ),
 						false, // never overwrite the old file
-					], function( err ) {
+					], ( err ) => {
 						if ( null === err ) {
 							grunt.log.writeln( 'Uploaded patch.' );
 							done();

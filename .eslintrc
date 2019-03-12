@@ -5,6 +5,7 @@
     },
     "extends": "plugin:@wordpress/eslint-plugin/recommended",
     "rules": {
-        "one-var": ["error", "never"]
+        "one-var": ["error", "never"],
+        "prefer-arrow-callback": ["error"]
     }
 }
