@@ -1,19 +1,19 @@
-const grunt = require( 'grunt' ),
-	patch = require( '../lib/patch.js' ),
-	coreGit = grunt.file.read( 'test/fixtures/core.git.diff' ),
-	coreSvn = grunt.file.read( 'test/fixtures/core.svn.diff' ),
-	developGit = grunt.file.read( 'test/fixtures/develop.git.diff' ),
-	developSvn = grunt.file.read( 'test/fixtures/develop.svn.diff' ),
-	coreIndexGit = grunt.file.read( 'test/fixtures/core.git.index.diff' ),
-	coreIndexSvn = grunt.file.read( 'test/fixtures/core.svn.index.diff' ),
-	developIndexGit = grunt.file.read( 'test/fixtures/develop.git.index.diff' ),
-	developIndexSvn = grunt.file.read( 'test/fixtures/develop.svn.index.diff' ),
-	developSampleGit = grunt.file.read( 'test/fixtures/develop.git.wp-config-sample.diff' ),
-	developSampleSvn = grunt.file.read( 'test/fixtures/develop.svn.wp-config-sample.diff' ),
-	testsSvn = grunt.file.read( 'test/fixtures/tests.develop.svn.diff' ),
-	testsGit = grunt.file.read( 'test/fixtures/tests.develop.git.diff' ),
-	abyes = grunt.file.read( 'test/fixtures/git.diff.ab.diff' ),
-	coreTrunkSvn = grunt.file.read( 'test/fixtures/core.svn.trunk.diff' );
+const grunt = require( 'grunt' );
+const patch = require( '../lib/patch.js' );
+const coreGit = grunt.file.read( 'test/fixtures/core.git.diff' );
+const coreSvn = grunt.file.read( 'test/fixtures/core.svn.diff' );
+const developGit = grunt.file.read( 'test/fixtures/develop.git.diff' );
+const developSvn = grunt.file.read( 'test/fixtures/develop.svn.diff' );
+const coreIndexGit = grunt.file.read( 'test/fixtures/core.git.index.diff' );
+const coreIndexSvn = grunt.file.read( 'test/fixtures/core.svn.index.diff' );
+const developIndexGit = grunt.file.read( 'test/fixtures/develop.git.index.diff' );
+const developIndexSvn = grunt.file.read( 'test/fixtures/develop.svn.index.diff' );
+const developSampleGit = grunt.file.read( 'test/fixtures/develop.git.wp-config-sample.diff' );
+const developSampleSvn = grunt.file.read( 'test/fixtures/develop.svn.wp-config-sample.diff' );
+const testsSvn = grunt.file.read( 'test/fixtures/tests.develop.svn.diff' );
+const testsGit = grunt.file.read( 'test/fixtures/tests.develop.git.diff' );
+const abyes = grunt.file.read( 'test/fixtures/git.diff.ab.diff' );
+const coreTrunkSvn = grunt.file.read( 'test/fixtures/core.svn.trunk.diff' );
 
 describe( 'Patch helpers', function() {
 	it( 'git a/b diffs should not automatticaly trigger moving to src', function() {

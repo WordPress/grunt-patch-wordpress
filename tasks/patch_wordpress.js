@@ -137,10 +137,10 @@ module.exports = function( grunt ) {
 	}
 
 	function getPatchFromTicket( patchUrl, options ) {
-		let matches,
-			longMatches,
-			matchUrl,
-			possiblePatches;
+		let matches;
+		let longMatches;
+		let matchUrl;
+		let possiblePatches;
 
 		grunt.log.debug( 'getPatchFromTicket: ' + patchUrl );
 		request( patchUrl, function( error, response, body ) {
@@ -185,9 +185,9 @@ module.exports = function( grunt ) {
 	}
 
 	function getLocalPatch( patchUrl ) {
-		const body = grunt.file.read( patchUrl ),
-			level = patch.isAb( body ) ? 1 : 0,
-			moveToSrc = patch.moveToSrc( body );
+		const body = grunt.file.read( patchUrl );
+		const level = patch.isAb( body ) ? 1 : 0;
+		const moveToSrc = patch.moveToSrc( body );
 
 		grunt.file.copy( patchUrl, tempFile );
 		grunt.event.emit( 'fileReady', level, moveToSrc );

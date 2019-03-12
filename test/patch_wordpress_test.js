@@ -1,10 +1,10 @@
 'use strict';
 
-const grunt = require( 'grunt' ),
-	patch = require( '../lib/patch.js' ),
-	url = require( 'url' ),
-	trac = require( '../lib/trac.js' ),
-	mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
+const grunt = require( 'grunt' );
+const patch = require( '../lib/patch.js' );
+const url = require( 'url' );
+const trac = require( '../lib/trac.js' );
+const mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
 
 describe( 'grunt_patch_wordpress', function() {
 	describe( 'sanity checks', function() {
