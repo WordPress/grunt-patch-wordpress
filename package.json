@@ -21,18 +21,19 @@
     "node": ">= 8.9.3"
   },
   "scripts": {
-    "test": "mocha",
-    "test:coverage": "nyc mocha",
-    "test:watch": "mocha -w",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
     "lint": "eslint . --ignore-path coverage",
     "lint:fix": "eslint . --fix"
   },
+  "jest": {
+    "testMatch": [ "**/test/**/*.js" ]
+  },
   "devDependencies": {
-    "chai": "^4.1.2",
     "eslint": "^4.17.0",
     "eslint-config-wordpress": "^2.0.0",
-    "mocha": "^5.0.0",
-    "nyc": "^11.4.1"
+    "jest": "^24.5.0"
   },
   "dependencies": {
     "grunt": "^1.0.2",
