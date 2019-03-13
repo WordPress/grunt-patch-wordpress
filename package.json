@@ -30,6 +30,9 @@
 	"jest": {
 		"testMatch": [
 			"**/test/**/*.js"
+		],
+		"testPathIgnorePatterns": [
+			".eslintrc.js"
 		]
 	},
 	"devDependencies": {
