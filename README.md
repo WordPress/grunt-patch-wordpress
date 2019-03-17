@@ -51,6 +51,14 @@ After you've made changes to your local WordPress develop repository, you can up
 grunt upload_patch:2907
 ```
 
+You can also store your WordPress.org credentials in environment variables. Please exercise caution when using this option, as it may cause your credentials to be leaked!
+
+```bash
+export WPORG_USERNAME=matt
+export WPORG_PASSWORD=MyPasswordIsVerySecure12345
+grunt uploadPatch:40000
+```
+
 ## Using the file_mappings option
 If you'd like to map old file paths in your patch to new file paths during the patching process, you can pass a file mappings object as an option. Using this option can be helpful when the file paths in the project have been changed since you've created your patch.
 
