@@ -1,5 +1,4 @@
 var grunt = require( 'grunt' ),
-	expect = require( 'chai' ).expect,
 	patch = require( '../lib/patch.js' ),
 	coreGit = grunt.file.read ( 'test/fixtures/core.git.diff' ),
 	coreSvn = grunt.file.read ( 'test/fixtures/core.svn.diff' ),
@@ -18,98 +17,73 @@ var grunt = require( 'grunt' ),
 
 describe( 'Patch helpers', function() {
 
-	it( 'git a/b diffs should not automatticaly trigger moving to src', function( done ) {
-		expect( patch.moveToSrc( abyes ) ).to.not.be.true;
-
-		done();
+	it( 'git a/b diffs should not automatticaly trigger moving to src', function() {
+		expect( patch.moveToSrc( abyes ) ).not.toBe( true );
 	});
 
-	it( 'tests diffs should always be applied in the root of the checkout', function( done ) {
+	it( 'tests diffs should always be applied in the root of the checkout', function() {
 
-		expect( patch.moveToSrc( testsGit ) ).to.not.be.true;
-		expect( patch.moveToSrc( testsSvn ) ).to.not.be.true;
-
-		done();
+		expect( patch.moveToSrc( testsGit ) ).not.toBe( true );
+		expect( patch.moveToSrc( testsSvn ) ).not.toBe( true );
 	});
 
-	it( 'dev.git diffs should always be applied in the root of the checkout', function( done ) {
+	it( 'dev.git diffs should always be applied in the root of the checkout', function() {
 
-		expect( patch.moveToSrc( developGit ) ).to.not.be.true;
-		expect( patch.moveToSrc( developIndexGit ) ).to.not.be.true;
-
-		done();
+		expect( patch.moveToSrc( developGit ) ).not.toBe( true );
+		expect( patch.moveToSrc( developIndexGit ) ).not.toBe( true );
 	});
 
-	it( 'dev.svn diffs should always be applied in the root of the checkout', function( done ) {
+	it( 'dev.svn diffs should always be applied in the root of the checkout', function() {
 
-		expect( patch.moveToSrc( developSvn ) ).to.not.be.true;
-		expect( patch.moveToSrc( developIndexSvn ) ).to.not.be.true;
-
-		done();
+		expect( patch.moveToSrc( developSvn ) ).not.toBe( true );
+		expect( patch.moveToSrc( developIndexSvn ) ).not.toBe( true );
 	});
 
-	it( 'core.git.wordpress.org diffs should always be applied in the svn folder', function( done ) {
+	it( 'core.git.wordpress.org diffs should always be applied in the svn folder', function() {
 
-		expect( patch.moveToSrc( coreGit ) ).to.be.true;
-
-		done();
+		expect( patch.moveToSrc( coreGit ) ).toBe( true );
 	});
 
-	it( 'core.svn.wordpress.org diffs should always be applied in the svn folder', function( done ) {
+	it( 'core.svn.wordpress.org diffs should always be applied in the svn folder', function() {
 
-		expect( patch.moveToSrc( coreSvn ) ).to.be.true;
-
-		done();
+		expect( patch.moveToSrc( coreSvn ) ).toBe( true );
 	});
 
-	it( 'core.svn.wordpress.org diffs from trunk should always be applied in the src folder', function( done ) {
+	it( 'core.svn.wordpress.org diffs from trunk should always be applied in the src folder', function() {
 
-		expect( patch.moveToSrc( coreTrunkSvn ) ).to.be.true;
-		expect( patch.isAb( coreTrunkSvn ) ).to.be.true;
-
-		done();
+		expect( patch.moveToSrc( coreTrunkSvn ) ).toBe( true );
+		expect( patch.isAb( coreTrunkSvn ) ).toBe( true );
 	});
 
-	it( 'index.php should always be applied in the src folder', function( done ) {
-
-		expect( patch.moveToSrc( coreIndexSvn ) ).to.be.true;
-		expect( patch.moveToSrc( coreIndexGit ) ).to.be.true;
-
-		done();
-
+	it( 'index.php should always be applied in the src folder', function() {
+		expect( patch.moveToSrc( coreIndexSvn ) ).toBe( true );
+		expect( patch.moveToSrc( coreIndexGit ) ).toBe( true );
 	});
 
-	it( 'wp-config-sample.php should always be applied in the root folder', function( done ) {
-		expect( patch.moveToSrc( developSampleSvn ) ).to.not.be.true;
-		expect( patch.moveToSrc( developSampleGit ) ).to.not.be.true;
-
-		done();
-
+	it( 'wp-config-sample.php should always be applied in the root folder', function() {
+		expect( patch.moveToSrc( developSampleSvn ) ).not.toBe( true );
+		expect( patch.moveToSrc( developSampleGit ) ).not.toBe( true );
 	});
 
-	it ( 'isAb should return true on patches with a/ b/ style', function( done ) {
+	it ( 'isAb should return true on patches with a/ b/ style', function() {
 
-		expect( patch.isAb( abyes ) ).to.be.true;
-
-		done();
+		expect( patch.isAb( abyes ) ).toBe( true );
 	});
 
-	it ( 'isAb should return false on patches without a/ b/ style', function( done ) {
+	it ( 'isAb should return false on patches without a/ b/ style', function() {
 
-		expect( patch.isAb( developSampleGit ) ).to.not.be.true;
-		expect( patch.isAb( developSampleSvn ) ).to.not.be.true;
-		expect( patch.isAb( coreIndexGit ) ).to.not.be.true;
-		expect( patch.isAb( coreIndexSvn ) ).to.not.be.true;
-		expect( patch.isAb( coreGit ) ).to.not.be.true;
-		expect( patch.isAb( coreSvn ) ).to.not.be.true;
-		expect( patch.isAb( developGit ) ).to.not.be.true;
-		expect( patch.isAb( developSvn ) ).to.not.be.true;
-		expect( patch.isAb( developIndexGit ) ).to.not.be.true;
-		expect( patch.isAb( developIndexSvn ) ).to.not.be.true;
-		expect( patch.isAb( testsGit ) ).to.not.be.true;
-		expect( patch.isAb( testsSvn ) ).to.not.be.true;
-
-		done();
+		expect( patch.isAb( developSampleGit ) ).not.toBe( true );
+		expect( patch.isAb( developSampleSvn ) ).not.toBe( true );
+		expect( patch.isAb( coreIndexGit ) ).not.toBe( true );
+		expect( patch.isAb( coreIndexSvn ) ).not.toBe( true );
+		expect( patch.isAb( coreGit ) ).not.toBe( true );
+		expect( patch.isAb( coreSvn ) ).not.toBe( true );
+		expect( patch.isAb( developGit ) ).not.toBe( true );
+		expect( patch.isAb( developSvn ) ).not.toBe( true );
+		expect( patch.isAb( developIndexGit ) ).not.toBe( true );
+		expect( patch.isAb( developIndexSvn ) ).not.toBe( true );
+		expect( patch.isAb( testsGit ) ).not.toBe( true );
+		expect( patch.isAb( testsSvn ) ).not.toBe( true );
 	});
 
 });
