@@ -14,15 +14,11 @@ const spawn = require( 'child_process' ).spawn;
 const inquirer = require( 'inquirer' );
 const url = require( 'url' );
 const fs = require( 'fs' );
-const _ = require( 'underscore' );
 const trac = require( '../lib/trac.js' );
 const patch = require( '../lib/patch.js' );
 const regex = require( '../lib/regex.js' );
 const xmlrpc = require( 'xmlrpc' );
 const mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
-
-_.str = _.str = require( 'underscore.string' );
-_.mixin( _.str.exports() );
 
 module.exports = function( grunt ) {
 	let tempFile = 'wppatch.diff';
@@ -171,7 +167,7 @@ module.exports = function( grunt ) {
 					] ).then( ( answers ) => {
 						grunt.log.debug( 'answers:' + JSON.stringify( answers ) );
 						matchUrl = options.tracUrl +
-						regex.urlsFromAttachmentList( matches[ _.indexOf( possiblePatches, answers.patch_name ) ] )[ 1 ];
+						regex.urlsFromAttachmentList( matches[ possiblePatches.indexOf( answers.patch_name ) ] )[ 1 ];
 						getPatch( trac.convertToRaw( url.parse( 'https://' + matchUrl ) ), options );
 					} );
 				}
@@ -233,9 +229,9 @@ module.exports = function( grunt ) {
 
 	function localFile( error, result, code, done, options ) {
 		if ( ! error ) {
-			const files = _.filter( result.split( '\n' ), ( file ) => {
-				return ( _.str.include( file, 'patch' ) || _.str.include( file, 'diff' ) );
-			} );
+			const files = result.split( '\n' ).filter( ( file ) => (
+				file.includes( 'patch' ) || file.includes( 'diff' )
+			) );
 			grunt.log.debug( 'files: ' + JSON.stringify( files ) );
 
 			if ( 0 === files.length ) {

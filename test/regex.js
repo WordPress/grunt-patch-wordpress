@@ -12,7 +12,10 @@ describe( 'regular expressions', () => {
 
 		expect( matches.length ).toBe( 2 );
 		expect( longMatches.length ).toBe( 4 );
-		expect( possiblePatches.length ).toBe( 2 );
+		expect( possiblePatches ).toEqual( [
+			'edit-form-comment.diff​ (626 bytes) - added by Thaicloud 7 weeks ago.',
+			'23988-edit-comment.diff​ (1.1 KB) - added by seanchayes 13 days ago.',
+		] );
 	} );
 
 	it( 'one patch on a ticket', () => {
