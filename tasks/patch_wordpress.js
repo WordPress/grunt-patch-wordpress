@@ -326,13 +326,17 @@ module.exports = function( grunt ) {
 				);
 			} );
 		};
-		inquirer.prompt(
-			[
-				{ type: 'input', name: 'username', message: 'Enter your WordPress.org username' },
-				{ type: 'password', name: 'password', message: 'Enter your WordPress.org password' },
-			] ).then( ( answers ) => {
-			uploadPatchWithCredentials( answers.username, answers.password );
+		if ( process.env.WPORG_USERNAME && process.env.WPORG_PASSWORD ) {
+			uploadPatchWithCredentials( process.env.WPORG_USERNAME, process.env.WPORG_PASSWORD );
+		} else {
+			inquirer.prompt(
+				[
+					{ type: 'input', name: 'username', message: 'Enter your WordPress.org username' },
+					{ type: 'password', name: 'password', message: 'Enter your WordPress.org password' },
+				] ).then( ( answers ) => {
+				uploadPatchWithCredentials( answers.username, answers.password );
+			}
+			);
 		}
-		);
 	} );
 };
