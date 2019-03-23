@@ -10,6 +10,7 @@
 
 const request = require( 'request' );
 const exec = require( 'child_process' ).exec;
+const execSync = require( 'child_process' ).execSync;
 const spawn = require( 'child_process' ).spawn;
 const inquirer = require( 'inquirer' );
 const url = require( 'url' );
@@ -295,7 +296,11 @@ module.exports = function( grunt ) {
 		}
 
 		const uploadPatchWithCredentials = function( username, password ) {
-			const diffCommand = isSvn() ? 'svn diff --diff-cmd diff' : 'git diff';
+			const diffCommand = isSvn() ? 'svn diff --diff-cmd diff' : 'git diff HEAD';
+
+			if ( ! isSvn() ) {
+				execSync( 'git add .' );
+			}
 
 			exec( diffCommand, ( error, result ) => {
 				const client = xmlrpc.createSecureClient( {
@@ -316,6 +321,10 @@ module.exports = function( grunt ) {
 						new Buffer( new Buffer( result ).toString( 'base64' ), 'base64' ),
 						false, // never overwrite the old file
 					], ( err ) => {
+						if ( ! isSvn() ) {
+							exec( 'git reset' );
+						}
+
 						if ( null === err ) {
 							grunt.log.writeln( 'Uploaded patch.' );
 							done();
