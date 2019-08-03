@@ -3,6 +3,7 @@ node_js:
   - '8'
   - '9'
   - '10'
-  - 'node'
+  - '11'
+  - '12'
 before_install:
   - npm install -g grunt-cli
