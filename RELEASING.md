@@ -5,7 +5,7 @@
 Due to the interactive nature of grunt-patch-wordpress, some manual testing is required in order to release a new version. This describes the bare minimum of testing needed to release a new version. 
 
 1) Open a ticket on WordPress Core Trac for the new version. This ticket will serve as both the test bed and for actually updating grunt-patch-wordpress.
-2) use `npm link` to test the unreleased version of grunt-patch-wordpress
+2) Use `npm link` to test the unreleased version of grunt-patch-wordpress
 3) create a patch in WordPress to bump grunt patch wordpress and upload it using `npm run grunt upload_patch`.
 4) Revert that file.
 5) use `npm run grunt patch` to check the file you just uploaded
