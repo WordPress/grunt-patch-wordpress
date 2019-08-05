@@ -20,6 +20,6 @@ Changing the minimum node version is a major version change
 
 ## Update the Numbers/Docs 
 
-1) bump package.json
+1) Bump `package.json`
 2) Update Readme with new version
 3) When pushing to WordPress Core, give props to everyone who contributed to grunt-patch-wordpress
