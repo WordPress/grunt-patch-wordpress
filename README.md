@@ -95,6 +95,4 @@ Please follow the [WordPress coding standards](https://make.wordpress.org/core/h
 - 0.4.1 - Remove Mocha as a peerdendency
 - 0.4.2 - set `cmd-diff` to `diff` for svn
 - 1.0.0 - Add filemapping option. Bump minimum node version. Change code style. Update tooling.
-
-### Unreleased
-- Bump minimium node version to 10.
+- 2.0.0 - Bump minimum node version. Use @wordpress/scripts. Allow Credentials to be stored. Reduce Dependancy on Grunt. 
