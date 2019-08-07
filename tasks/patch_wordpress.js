@@ -318,7 +318,7 @@ module.exports = function( grunt ) {
 						ticketNumber,
 						ticketNumber + '.diff',
 						'', // description. empty for now.
-						new Buffer( new Buffer( result ).toString( 'base64' ), 'base64' ),
+						new Buffer.from( new Buffer.from( result ).toString( 'base64' ), 'base64' ),
 						false, // never overwrite the old file
 					], ( err ) => {
 						if ( ! isSvn() ) {
