@@ -13,7 +13,7 @@ const exec = require( 'child_process' ).exec;
 const execSync = require( 'child_process' ).execSync;
 const spawn = require( 'child_process' ).spawn;
 const inquirer = require( 'inquirer' );
-const keytar = require('keytar')
+const keytar = require( 'keytar' );
 const url = require( 'url' );
 const fs = require( 'fs' );
 const trac = require( '../lib/trac.js' );
@@ -337,11 +337,10 @@ module.exports = function( grunt ) {
 			} );
 		};
 		const getCredentials = keytar.findCredentials( 'wporg_patch' );
-		getCredentials.then( savedCredentials => {
-			if ( savedCredentials.length > 0 ){
-				uploadPatchWithCredentials( savedCredentials[0].account, savedCredentials[0].password );
-			}
-			else if ( process.env.WPORG_USERNAME && process.env.WPORG_PASSWORD ) {
+		getCredentials.then( ( savedCredentials ) => {
+			if ( savedCredentials.length > 0 ) {
+				uploadPatchWithCredentials( savedCredentials[ 0 ].account, savedCredentials[ 0 ].password );
+			} else if ( process.env.WPORG_USERNAME && process.env.WPORG_PASSWORD ) {
 				uploadPatchWithCredentials( process.env.WPORG_USERNAME, process.env.WPORG_PASSWORD );
 			} else {
 				inquirer.prompt(
@@ -351,12 +350,12 @@ module.exports = function( grunt ) {
 						{ type: 'confirm', name: 'saveCredentials', message: 'Save your credentials?' },
 					] ).then( ( answers ) => {
 					uploadPatchWithCredentials( answers.username, answers.password );
-						if ( answers.saveCredentials ){
-							keytar.setPassword( 'wporg_patch', answers.username, answers.password );
-						}
+					if ( answers.saveCredentials ) {
+						keytar.setPassword( 'wporg_patch', answers.username, answers.password );
+					}
 				}
 				);
 			}
-		});
+		} );
 	} );
 };
