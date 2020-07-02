@@ -140,7 +140,14 @@ module.exports = function( grunt ) {
 		let possiblePatches;
 
 		grunt.log.debug( 'getPatchFromTicket: ' + patchUrl );
-		request( patchUrl, ( error, response, body ) => {
+		
+		const requestOptions = {
+			url: patchUrl,
+			headers: {
+				'User-Agent': 'grunt-patch-wordpress'
+			}
+		};
+		request( requestOptions, ( error, response, body ) => {
 			if ( ! error && 200 === response.statusCode ) {
 				matches = regex.patchAttachments( body );
 				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) );
@@ -192,7 +199,14 @@ module.exports = function( grunt ) {
 
 	function getPatch( patchUrl ) {
 		grunt.log.debug( 'getting patch: ' + patchUrl );
-		request( patchUrl, ( error, response, body ) => {
+		
+		const requestOptions = {
+			url: patchUrl,
+			headers: {
+				'User-Agent': 'grunt-patch-wordpress'
+			}
+		};
+		request( requestOptions, ( error, response, body ) => {
 			if ( ! error && 200 === response.statusCode ) {
 				const level = patch.isAb( body ) ? 1 : 0;
 				const moveToSrc = patch.moveToSrc( body );
