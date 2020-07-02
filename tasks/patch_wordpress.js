@@ -140,12 +140,12 @@ module.exports = function( grunt ) {
 		let possiblePatches;
 
 		grunt.log.debug( 'getPatchFromTicket: ' + patchUrl );
-		
+
 		const requestOptions = {
 			url: patchUrl,
 			headers: {
-				'User-Agent': 'grunt-patch-wordpress'
-			}
+				'User-Agent': 'grunt-patch-wordpress',
+			},
 		};
 		request( requestOptions, ( error, response, body ) => {
 			if ( ! error && 200 === response.statusCode ) {
@@ -199,12 +199,12 @@ module.exports = function( grunt ) {
 
 	function getPatch( patchUrl ) {
 		grunt.log.debug( 'getting patch: ' + patchUrl );
-		
+
 		const requestOptions = {
 			url: patchUrl,
 			headers: {
-				'User-Agent': 'grunt-patch-wordpress'
-			}
+				'User-Agent': 'grunt-patch-wordpress',
+			},
 		};
 		request( requestOptions, ( error, response, body ) => {
 			if ( ! error && 200 === response.statusCode ) {
