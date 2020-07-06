@@ -1,6 +1,6 @@
 /*
  * grunt-patch-wordpress
- * https://github.com/aaronjorbin/grunt-patch-wordpress
+ * https://github.com/WordPress/grunt-patch-wordpress
  * Based on https://gist.github.com/markjaquith/4219135
  *
  *
@@ -144,7 +144,7 @@ module.exports = function( grunt ) {
 		const requestOptions = {
 			url: patchUrl,
 			headers: {
-				'User-Agent': 'grunt-patch-wordpress',
+				'User-Agent': 'grunt-patch-wordpress; https://github.com/WordPress/grunt-patch-wordpress',
 			},
 		};
 		request( requestOptions, ( error, response, body ) => {
@@ -203,7 +203,7 @@ module.exports = function( grunt ) {
 		const requestOptions = {
 			url: patchUrl,
 			headers: {
-				'User-Agent': 'grunt-patch-wordpress',
+				'User-Agent': 'grunt-patch-wordpress; https://github.com/WordPress/grunt-patch-wordpress',
 			},
 		};
 		request( requestOptions, ( error, response, body ) => {
