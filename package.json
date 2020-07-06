@@ -54,7 +54,7 @@
 	},
 	"scripts": {
 		"check-engines": "wp-scripts check-engines",
-		"check-licenses": "wp-scripts check-licenses",
+		"check-licenses": "wp-scripts check-licenses --ignore=language-subtag-registry,tslib",
 		"test:coverage": "wp-scripts test-unit-js --coverage",
 		"test:help": "wp-scripts test-unit-js --help",
 		"test:unit": "wp-scripts test-unit-js",
