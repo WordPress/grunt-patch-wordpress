@@ -26,9 +26,13 @@ describe( 'regular expressions', () => {
 
 	it( 'url from a list of attachments', () => {
 		const matches = regex.patchAttachments( html23994 );
-		const url = 'core.trac.wordpress.org' + regex.urlsFromAttachmentList( matches[ 0 ] )[ 1 ];
+		const url =
+			'core.trac.wordpress.org' +
+			regex.urlsFromAttachmentList( matches[ 0 ] )[ 1 ];
 
-		expect( url ).toBe( 'core.trac.wordpress.org/attachment/ticket/23994/23994.diff' );
+		expect( url ).toBe(
+			'core.trac.wordpress.org/attachment/ticket/23994/23994.diff'
+		);
 	} );
 
 	it( 'no patches on a ticket', () => {
