@@ -6,10 +6,18 @@ const developGit = grunt.file.read( 'test/fixtures/develop.git.diff' );
 const developSvn = grunt.file.read( 'test/fixtures/develop.svn.diff' );
 const coreIndexGit = grunt.file.read( 'test/fixtures/core.git.index.diff' );
 const coreIndexSvn = grunt.file.read( 'test/fixtures/core.svn.index.diff' );
-const developIndexGit = grunt.file.read( 'test/fixtures/develop.git.index.diff' );
-const developIndexSvn = grunt.file.read( 'test/fixtures/develop.svn.index.diff' );
-const developSampleGit = grunt.file.read( 'test/fixtures/develop.git.wp-config-sample.diff' );
-const developSampleSvn = grunt.file.read( 'test/fixtures/develop.svn.wp-config-sample.diff' );
+const developIndexGit = grunt.file.read(
+	'test/fixtures/develop.git.index.diff'
+);
+const developIndexSvn = grunt.file.read(
+	'test/fixtures/develop.svn.index.diff'
+);
+const developSampleGit = grunt.file.read(
+	'test/fixtures/develop.git.wp-config-sample.diff'
+);
+const developSampleSvn = grunt.file.read(
+	'test/fixtures/develop.svn.wp-config-sample.diff'
+);
 const testsSvn = grunt.file.read( 'test/fixtures/tests.develop.svn.diff' );
 const testsGit = grunt.file.read( 'test/fixtures/tests.develop.git.diff' );
 const abyes = grunt.file.read( 'test/fixtures/git.diff.ab.diff' );
