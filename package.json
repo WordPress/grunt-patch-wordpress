@@ -1,12 +1,8 @@
 {
 	"name": "grunt-patch-wordpress",
 	"version": "2.0.0",
-	"description": "Patch your core WordPress",
-	"author": {
-		"name": "Aaron Jorbin",
-		"email": "aaron@jorb.in",
-		"url": "http://aaron.jorb.in"
-	},
+	"description": "Patch your core WordPress.",
+	"author": "The WordPress Contributors",
 	"license": "MIT",
 	"keywords": [
 		"gruntplugin"
