@@ -21,7 +21,7 @@ const regex = require( '../lib/regex.js' );
 const xmlrpc = require( 'xmlrpc' );
 const mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
 
-module.exports = function( grunt ) {
+module.exports = function ( grunt ) {
 	let tempFile = 'wppatch.diff';
 	const defaults = {
 		tracUrl: 'core.trac.wordpress.org',
@@ -354,7 +354,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask(
 		'patch_wordpress',
 		'Patch your develop-wordpress directory like a boss',
-		function( ticket, afterProtocal ) {
+		function ( ticket, afterProtocal ) {
 			const done = this.async();
 			const options = this.options( defaults );
 
@@ -371,9 +371,9 @@ module.exports = function( grunt ) {
 				// look for diffs and patches in the root of the checkout and
 				// prompt using inquirer to pick one
 
-				const fileFinderCommand = isSvn() ?
-					'svn status ' :
-					'git ls-files --other --exclude-standard';
+				const fileFinderCommand = isSvn()
+					? 'svn status '
+					: 'git ls-files --other --exclude-standard';
 
 				exec( fileFinderCommand, ( error, result, code ) => {
 					localFile( error, result, code, done, options );
@@ -387,7 +387,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask(
 		'upload_patch',
 		'Upload the current diff of your develop-wordpress directory to Trac',
-		function( ticketNumber ) {
+		function ( ticketNumber ) {
 			const done = this.async();
 			const options = this.options( defaults );
 
@@ -401,10 +401,10 @@ module.exports = function( grunt ) {
 				);
 			}
 
-			const uploadPatchWithCredentials = function( username, password ) {
-				const diffCommand = isSvn() ?
-					'svn diff --diff-cmd diff' :
-					'git diff HEAD';
+			const uploadPatchWithCredentials = function ( username, password ) {
+				const diffCommand = isSvn()
+					? 'svn diff --diff-cmd diff'
+					: 'git diff HEAD';
 
 				if ( ! isSvn() ) {
 					execSync( 'git add .' );
