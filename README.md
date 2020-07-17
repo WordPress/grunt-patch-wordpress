@@ -96,3 +96,4 @@ Please follow the [WordPress coding standards](https://make.wordpress.org/core/h
 - 0.4.2 - set `cmd-diff` to `diff` for svn
 - 1.0.0 - Add filemapping option. Bump minimum node version. Change code style. Update tooling.
 - 2.0.0 - Bump minimum node version. Use @wordpress/scripts. Allow Credentials to be stored. Reduce Dependancy on Grunt. 
+- 3.0.0 - Bump minimum node version to [Node 12](https://github.com/WordPress/grunt-patch-wordpress/pull/89). [Update wp-scripts](https://github.com/WordPress/grunt-patch-wordpress/pull/87) and some general formatting. Use a [custom user agent for requests](https://github.com/WordPress/grunt-patch-wordpress/pull/85).
