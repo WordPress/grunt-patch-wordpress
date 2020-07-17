@@ -16,7 +16,7 @@
 		"url": "https://github.com/wordpress/grunt-patch-wordpress/issues"
 	},
 	"engines": {
-		"node": ">= 10"
+		"node": ">= 12"
 	},
 	"main": "Gruntfile.js",
 	"jest": {
