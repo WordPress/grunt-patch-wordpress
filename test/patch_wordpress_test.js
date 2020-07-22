@@ -7,7 +7,7 @@ const trac = require( '../lib/trac.js' );
 const mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
 
 describe( 'grunt_patch_wordpress', () => {
-	describe( 'sanity checks', () => {
+	describe( 'initial checks', () => {
 		it( 'a is a', () => {
 			expect( 'a' ).toEqual( 'a' );
 		} );
