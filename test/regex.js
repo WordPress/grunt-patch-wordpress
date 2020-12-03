@@ -46,4 +46,43 @@ describe( 'regular expressions', () => {
 
 		expect( regex.localFileClean( filename ) ).toEqual( 'one.diff' );
 	} );
+
+	it.each( [
+		[ 'https://github.com/WordPress/wordpress-develop/pull/740/', false ], // trailing slash
+		[ 'https://github.com/WordPress/wordpress-develop/pull/740', false ], // no trailing slash
+		[
+			'https://github.com/WordPress/wordpress-develop/pull/740/checks',
+			false,
+		], // checks
+		[
+			'https://github.com/WordPress/wordpress-develop/pull/740/files',
+			false,
+		], // files
+		[
+			'https://github.com/WordPress/wordpress-develop/pull/740.diff',
+			false,
+		], // already diffed
+		[
+			'https://github.com/WordPress/wordpress-develop/pull/740.patch',
+			false,
+		], // already patched
+		[
+			'https://patch-diff.githubusercontent.com/raw/WordPress/wordpress-develop/pull/740.diff',
+			false,
+		], // already diffed and redirected
+		[
+			'https://patch-diff.githubusercontent.com/raw/WordPress/wordpress-develop/pull/740.patch',
+			false,
+		], // already diffed and redirected with patch
+		[ 'https://git.com/WordPress/wordpress-develop/pull/740/files', true ], // not github url
+	] )( 'github url %s should get normalized', ( url, blank ) => {
+		const expected =
+			'https://patch-diff.githubusercontent.com/raw/WordPress/wordpress-develop/pull/740.diff';
+
+		if ( blank ) {
+			expect( regex.githubConvert( url ) ).toBe( false );
+		} else {
+			expect( regex.githubConvert( url ) ).toEqual( expected );
+		}
+	} );
 } );

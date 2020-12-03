@@ -99,15 +99,11 @@ module.exports = function ( grunt ) {
 		} );
 
 		// if patchUrl is a github url
-		if ( 'github.com' === parsedUrl.hostname ) {
-			grunt.log.debug( 'github url detected: ' + patchUrl );
-			if (
-				'.diff' !== patchUrl.slice( -5 ) &&
-				'.patch' !== patchUrl.slice( -6 )
-			) {
-				patchUrl += '.diff';
-			}
-			getPatch( patchUrl, options );
+		if ( regex.githubConvert( patchUrl ) ) {
+			const diffUrl = regex.githubConvert( patchUrl );
+			grunt.log.debug( 'github url detected: ' + diffUrl );
+
+			getPatch( diffUrl, options );
 
 			// if patchUrl is a full url and is a raw-attachement, just apply it
 		} else if (
