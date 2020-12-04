@@ -1,7 +1,5 @@
 # grunt-patch-wordpress
 
-[![Build Status](https://travis-ci.com/WordPress/grunt-patch-wordpress.png?branch=trunk)](https://travis-ci.com/WordPress/grunt-patch-wordpress/)
-
 > Patch your develop-wordpress directory like a boss (also works on other trac based projects)
 
 ## Getting Started
