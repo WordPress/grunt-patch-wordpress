@@ -1,4 +1,5 @@
 # grunt-patch-wordpress
+![Unit Tests](https://github.com/WordPress/grunt-patch-wordpress/workflows/Unit%20Tests/badge.svg)
 
 > Patch your develop-wordpress directory like a boss (also works on other trac based projects)
 
