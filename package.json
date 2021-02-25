@@ -39,6 +39,7 @@
 		}
 	},
 	"dependencies": {
+		"chalk": "^4.1.0",
 		"grunt": "^1.0.3",
 		"inquirer": "^5.1.0",
 		"request": "^2.83.0",
