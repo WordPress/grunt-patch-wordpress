@@ -28,6 +28,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
+    - name: Use Latest NPM
+      run: npm i -g npm
+
     - name: Install NPM dependencies and build
       run: npm install
 
