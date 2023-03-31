@@ -8,7 +8,7 @@
  * Licensed under the MIT license.
  */
 
-const request = require( 'request' );
+const https = require( 'https' );
 const exec = require( 'child_process' ).exec;
 const execSync = require( 'child_process' ).execSync;
 const spawn = require( 'child_process' ).spawn;
@@ -168,83 +168,92 @@ module.exports = function ( grunt ) {
 		grunt.log.debug( 'getPatchFromTicket: ' + patchUrl );
 
 		const requestOptions = {
-			url: patchUrl,
 			headers: {
 				'User-Agent':
 					'grunt-patch-wordpress; https://github.com/WordPress/grunt-patch-wordpress',
 			},
 		};
-		request( requestOptions, ( error, response, body ) => {
-			if ( ! error && 200 === response.statusCode ) {
-				matches = regex.patchAttachments( body );
-				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) );
+		https
+			.get( patchUrl, requestOptions, ( resp ) => {
+				let data = '';
+				// A chunk of data has been received.
+				resp.on( 'data', ( chunk ) => {
+					data += chunk;
+				} );
 
-				if ( null === matches ) {
-					grunt.event.emit(
-						'fileFail',
-						patchUrl + '\ncontains no attachments'
-					);
-				} else if ( 1 === matches.length ) {
-					matchUrl =
-						options.tracUrl +
-						regex.urlsFromAttachmentList( matches[ 0 ] )[ 1 ];
-					getPatch(
-						trac.convertToRaw( url.parse( 'https://' + matchUrl ) ),
-						options
-					);
-				} else {
-					longMatches = regex.longMatches( body );
-					possiblePatches = regex.possiblePatches( longMatches );
+				// The whole response has been received.
+				resp.on( 'end', () => {
+					matches = regex.patchAttachments( data );
+					grunt.log.debug( 'matches: ' + JSON.stringify( matches ) );
 
-					grunt.log.debug(
-						'possiblePatches: ' + JSON.stringify( possiblePatches )
-					);
-					grunt.log.debug(
-						'longMatches: ' + JSON.stringify( longMatches )
-					);
-					inquirer
-						.prompt( [
-							{
-								type: 'list',
-								name: 'patch_name',
-								message: 'Please select a patch to apply',
-								choices: possiblePatches,
+					if ( null === matches ) {
+						grunt.event.emit(
+							'fileFail',
+							patchUrl + '\ncontains no attachments'
+						);
+					} else if ( 1 === matches.length ) {
+						matchUrl =
+							options.tracUrl +
+							regex.urlsFromAttachmentList( matches[ 0 ] )[ 1 ];
+						getPatch(
+							trac.convertToRaw(
+								url.parse( 'https://' + matchUrl )
+							),
+							options
+						);
+					} else {
+						longMatches = regex.longMatches( data );
+						possiblePatches = regex.possiblePatches( longMatches );
 
-								// preselect the most recent patch
-								default: possiblePatches.length - 1,
-							},
-						] )
-						.then( ( answers ) => {
-							grunt.log.debug(
-								'answers:' + JSON.stringify( answers )
-							);
-							matchUrl =
-								options.tracUrl +
-								regex.urlsFromAttachmentList(
-									matches[
-										possiblePatches.indexOf(
-											answers.patch_name
-										)
-									]
-								)[ 1 ];
-							getPatch(
-								trac.convertToRaw(
-									url.parse( 'https://' + matchUrl )
-								),
-								options
-							);
-						} );
-				}
-			} else {
+						grunt.log.debug(
+							'possiblePatches: ' +
+								JSON.stringify( possiblePatches )
+						);
+						grunt.log.debug(
+							'longMatches: ' + JSON.stringify( longMatches )
+						);
+						inquirer
+							.prompt( [
+								{
+									type: 'list',
+									name: 'patch_name',
+									message: 'Please select a patch to apply',
+									choices: possiblePatches,
+
+									// preselect the most recent patch
+									default: possiblePatches.length - 1,
+								},
+							] )
+							.then( ( answers ) => {
+								grunt.log.debug(
+									'answers:' + JSON.stringify( answers )
+								);
+								matchUrl =
+									options.tracUrl +
+									regex.urlsFromAttachmentList(
+										matches[
+											possiblePatches.indexOf(
+												answers.patch_name
+											)
+										]
+									)[ 1 ];
+								getPatch(
+									trac.convertToRaw(
+										url.parse( 'https://' + matchUrl )
+									),
+									options
+								);
+							} );
+					}
+				} );
+			} )
+			.on( 'error', ( err ) => {
 				// something went wrong
 				grunt.event.emit(
 					'fileFail',
-					'getPatchFromTicket fail \n status: ' + response.statusCode
+					'getPatchFromTicket fail \n status: ' + err
 				);
-			}
-		} );
-
-		grunt.event.emit( 'fileFile', 'method not available yet' );
+			} );
 	}
 
 	function getLocalPatch( patchUrl ) {
@@ -260,27 +269,34 @@ module.exports = function ( grunt ) {
 		grunt.log.debug( 'getting patch: ' + patchUrl );
 
 		const requestOptions = {
-			url: patchUrl,
 			headers: {
 				'User-Agent':
 					'grunt-patch-wordpress; https://github.com/WordPress/grunt-patch-wordpress',
 			},
 		};
-		request( requestOptions, ( error, response, body ) => {
-			if ( ! error && 200 === response.statusCode ) {
-				const level = patch.isAb( body ) ? 1 : 0;
-				const moveToSrc = patch.moveToSrc( body );
+		https
+			.get( patchUrl, requestOptions, ( resp ) => {
+				let data = '';
+				resp.on( 'data', ( chunk ) => {
+					data += chunk;
+				} );
 
-				grunt.file.write( tempFile, body );
-				grunt.event.emit( 'fileReady', level, moveToSrc );
-			} else {
+				// The whole response has been received.
+				resp.on( 'end', () => {
+					const level = patch.isAb( data ) ? 1 : 0;
+					const moveToSrc = patch.moveToSrc( data );
+
+					grunt.file.write( tempFile, data );
+					grunt.event.emit( 'fileReady', level, moveToSrc );
+				} );
+			} )
+			.on( 'error', ( err ) => {
 				// something went wrong
 				grunt.event.emit(
 					'fileFail',
-					'getPatch_fail \n status: ' + response.statusCode
+					'getPatch_fail \n status: ' + err
 				);
-			}
-		} );
+			} );
 	}
 
 	function fileFail( done, msg ) {
