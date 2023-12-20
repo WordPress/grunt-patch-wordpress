@@ -1,6 +1,7 @@
 node_modules
 npm-debug.log
 tmp
+package-lock.json
 yarn.lock
 coverage
 .nyc_output
