@@ -17,16 +17,19 @@ jobs:
 
     strategy:
       matrix:
-        node-versions: [ '12', '14' ]
+        node-version:
+          - 20
+          - 21
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
       with:
         node-version: ${{ matrix.node-version }}
+        check-latest: true
 
     - name: Install NPM dependencies and build
       run: npm ci
