@@ -1,6 +1,6 @@
 {
 	"name": "grunt-patch-wordpress",
-	"version": "3.0.1",
+	"version": "4.0.0",
 	"description": "Patch your core WordPress.",
 	"author": "The WordPress Contributors",
 	"license": "MIT",
