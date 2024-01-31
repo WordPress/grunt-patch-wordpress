@@ -2,7 +2,8 @@ name: Props Bot
 
 on:
   # This event runs anytime a PR is (re)opened, updated, or labeled.
-  # The logic below will look for
+  # GitHub does not allow filtering the `labeled` event by a specific label.
+  # However, the logic below will short-circuit the workflow when the `props-bot` label is not the one being added.
   pull_request:
     types:
       - opened
@@ -10,17 +11,17 @@ on:
       - reopened
       - labeled
   # This event runs anytime a comment is added or deleted.
-  # You cannot filter this event to happen for PR comments only.
+  # You cannot filter this event for PR comments only.
   # However, the logic below does short-circuit the workflow for issues.
   issue_comment:
     type:
       - created
       - deleted
-  # This event will run everytime a new PR review is created.
+  # This event will run everytime a new PR review is initially submitted.
   pull_request_review:
     types:
       - submitted
-  # This event runs anytime a PR review comment is added or deleted.
+  # This event runs anytime a PR review comment is created or deleted.
   pull_request_review_comment:
     types:
       - created
@@ -51,10 +52,16 @@ jobs:
       pull-requests: write
       contents: read
     timeout-minutes: 20
+    # The job should only run if:
+    #
+    # - A pull request review is created or commented on.
+    # - An issue comment is added to a pull request.
+    # - A pull request is opened, synchronized, or reopened.
+    # - The `props-bot` label is added to the pull request.
     if: |
       contains( fromJSON( '["pull_request_review", "pull_request_review_comment"]' ), github.event_name ) ||
       ( github.event_name == 'issue_comment' && github.event.issue.pull_request ) ||
-      github.event.action != 'labeled' ||
+      github.event_name == 'pull_request' && github.event.action != 'labeled' ||
       'props-bot' == github.event.label.name
 
     steps:
