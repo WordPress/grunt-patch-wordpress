@@ -1,6 +1,6 @@
 {
 	"name": "grunt-patch-wordpress",
-	"version": "3.0.1",
+	"version": "4.0.0",
 	"description": "Patch your core WordPress.",
 	"author": "The WordPress Contributors",
 	"license": "MIT",
@@ -16,8 +16,8 @@
 		"url": "https://github.com/wordpress/grunt-patch-wordpress/issues"
 	},
 	"engines": {
-		"node": ">=12",
-		"npm": ">=6.9"
+		"node": ">=20.10.0",
+		"npm": ">=10.2.3"
 	},
 	"main": "Gruntfile.js",
 	"jest": {
@@ -47,12 +47,12 @@
 		"xmlrpc": "^1.3.2"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^14.1.1",
-		"concurrently": "^6.0.2"
+		"@wordpress/scripts": "^26.19.0",
+		"concurrently": "^8.2.2"
 	},
 	"scripts": {
 		"check-engines": "wp-scripts check-engines",
-		"check-licenses": "wp-scripts check-licenses",
+		"check-licenses": "wp-scripts check-licenses --prod",
 		"test:coverage": "wp-scripts test-unit-js --coverage",
 		"test:help": "wp-scripts test-unit-js --help",
 		"test:unit": "wp-scripts test-unit-js",

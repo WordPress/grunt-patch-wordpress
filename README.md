@@ -96,3 +96,5 @@ Please follow the [WordPress coding standards](https://make.wordpress.org/core/h
 - 1.0.0 - Add filemapping option. Bump minimum node version. Change code style. Update tooling.
 - 2.0.0 - Bump minimum node version. Use @wordpress/scripts. Allow Credentials to be stored. Reduce Dependancy on Grunt. 
 - 3.0.0 - Bump minimum node version to [Node 12](https://github.com/WordPress/grunt-patch-wordpress/pull/89). [Update wp-scripts](https://github.com/WordPress/grunt-patch-wordpress/pull/87) and some general formatting. Use a [custom user agent for requests](https://github.com/WordPress/grunt-patch-wordpress/pull/85).
+- 3.0.1 - Add support for more github URL formats. Internal: Use Github Actions instead of Travis.
+- 4.0.0 - Bump minimum node version and some dependencies.
