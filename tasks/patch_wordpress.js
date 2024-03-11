@@ -18,6 +18,7 @@ const fs = require( 'fs' );
 const trac = require( '../lib/trac.js' );
 const patch = require( '../lib/patch.js' );
 const regex = require( '../lib/regex.js' );
+const log = require( '../lib/log' );
 const xmlrpc = require( 'xmlrpc' );
 const mapOldToNewFilePath = require( '../lib/map_old_to_new_file_path.js' );
 
@@ -36,7 +37,7 @@ module.exports = function ( grunt ) {
 	}
 
 	function applyPatch( patchUrl, done, options ) {
-		grunt.verbose.write( patchUrl );
+		log.verbose( patchUrl );
 		const parsedUrl = url.parse( patchUrl );
 
 		// What to do when either our patch is ready
@@ -58,13 +59,9 @@ module.exports = function ( grunt ) {
 			patchArgs.push( '-p' + level );
 			patchArgs.push( '--input=' + tempFile );
 
-			grunt.log.debug(
-				'patch options: ' + JSON.stringify( patchOptions )
-			);
-			grunt.log.debug(
-				'patch arguments: ' + JSON.stringify( patchArgs )
-			);
-			grunt.log.debug( 'patch tempFile: ' + JSON.stringify( tempFile ) );
+			log.debug( 'patch options: ' + JSON.stringify( patchOptions ) );
+			log.debug( 'patch arguments: ' + JSON.stringify( patchArgs ) );
+			log.debug( 'patch tempFile: ' + JSON.stringify( tempFile ) );
 
 			// Maps old file paths in patches to new file paths.
 			if ( options.file_mappings ) {
@@ -75,12 +72,12 @@ module.exports = function ( grunt ) {
 
 			patchProcess.on( 'exit', ( code, signal ) => {
 				if ( signal ) {
-					grunt.log.debug( 'error signal: ' + signal );
+					log.debug( 'error signal: ' + signal );
 				}
 
 				// if debug is enabled, don't delete the file
 				if ( grunt.option( 'debug' ) ) {
-					grunt.log.debug( 'File Saved' );
+					log.debug( 'File Saved' );
 				} else {
 					grunt.file.delete( tempFile );
 				}
@@ -92,7 +89,7 @@ module.exports = function ( grunt ) {
 		// or we know we have failed
 		grunt.event.once( 'fileFail', ( msg ) => {
 			if ( 'string' === typeof msg ) {
-				grunt.log.errorlns( msg );
+				log.error( msg );
 			}
 
 			done( false );
@@ -101,7 +98,7 @@ module.exports = function ( grunt ) {
 		// if patchUrl is a github url
 		if ( regex.githubConvert( patchUrl ) ) {
 			const diffUrl = regex.githubConvert( patchUrl );
-			grunt.log.debug( 'github url detected: ' + diffUrl );
+			log.debug( 'github url detected: ' + diffUrl );
 
 			getPatch( diffUrl, options );
 
@@ -148,7 +145,7 @@ module.exports = function ( grunt ) {
 	}
 
 	function getPatchFromTicketNumber( patchUrl, options ) {
-		grunt.log.debug( 'getPatchFromTicketNumber: ' + patchUrl );
+		log.debug( 'getPatchFromTicketNumber: ' + patchUrl );
 		getPatchFromTicket(
 			'https://' +
 				options.tracUrl +
@@ -165,7 +162,7 @@ module.exports = function ( grunt ) {
 		let matchUrl;
 		let possiblePatches;
 
-		grunt.log.debug( 'getPatchFromTicket: ' + patchUrl );
+		log.debug( 'getPatchFromTicket: ' + patchUrl );
 
 		const requestOptions = {
 			url: patchUrl,
@@ -177,7 +174,7 @@ module.exports = function ( grunt ) {
 		request( requestOptions, ( error, response, body ) => {
 			if ( ! error && 200 === response.statusCode ) {
 				matches = regex.patchAttachments( body );
-				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) );
+				log.debug( 'matches: ' + JSON.stringify( matches ) );
 
 				if ( null === matches ) {
 					grunt.event.emit(
@@ -196,10 +193,10 @@ module.exports = function ( grunt ) {
 					longMatches = regex.longMatches( body );
 					possiblePatches = regex.possiblePatches( longMatches );
 
-					grunt.log.debug(
+					log.debug(
 						'possiblePatches: ' + JSON.stringify( possiblePatches )
 					);
-					grunt.log.debug(
+					log.debug(
 						'longMatches: ' + JSON.stringify( longMatches )
 					);
 					inquirer
@@ -215,9 +212,7 @@ module.exports = function ( grunt ) {
 							},
 						] )
 						.then( ( answers ) => {
-							grunt.log.debug(
-								'answers:' + JSON.stringify( answers )
-							);
+							log.debug( 'answers:' + JSON.stringify( answers ) );
 							matchUrl =
 								options.tracUrl +
 								regex.urlsFromAttachmentList(
@@ -257,7 +252,7 @@ module.exports = function ( grunt ) {
 	}
 
 	function getPatch( patchUrl ) {
-		grunt.log.debug( 'getting patch: ' + patchUrl );
+		log.debug( 'getting patch: ' + patchUrl );
 
 		const requestOptions = {
 			url: patchUrl,
@@ -284,30 +279,26 @@ module.exports = function ( grunt ) {
 	}
 
 	function fileFail( done, msg ) {
-		grunt.log.errorlns( 'Nothing to patch.' );
-		grunt.log.errorlns( '' );
-		grunt.log.errorlns( '' );
-		grunt.log.errorlns( 'To use this command, please:' );
-		grunt.log.errorlns( '' );
-		grunt.log.errorlns(
-			'1) have a diff or patch in your WordPress Directory'
-		);
-		grunt.log.errorlns( '' );
-		grunt.log.errorlns(
-			'2) enter a ticket number, e.g. grunt patch:15705'
-		);
-		grunt.log.errorlns( '' );
-		grunt.log.errorlns(
+		log.error( 'Nothing to patch.' );
+		log.error( '' );
+		log.error( '' );
+		log.error( 'To use this command, please:' );
+		log.error( '' );
+		log.error( '1) have a diff or patch in your WordPress Directory' );
+		log.error( '' );
+		log.error( '2) enter a ticket number, e.g. grunt patch:15705' );
+		log.error( '' );
+		log.error(
 			'3) enter a ticket url, e.g. grunt patch:https://core.trac.wordpress.org/ticket/15705'
 		);
-		grunt.log.errorlns( '' );
-		grunt.log.errorlns(
+		log.error( '' );
+		log.error(
 			'4) enter a patch url, e.g. grunt patch:https://core.trac.wordpress.org/attachment/ticket/11817/13711.diff'
 		);
-		grunt.log.errorlns( '' );
+		log.error( '' );
 
 		if ( 'string' === typeof msg ) {
-			grunt.verbose.errorlns( 'msg: ' + msg );
+			log.verbose( 'msg: ' + msg );
 		}
 
 		done( false );
@@ -321,7 +312,7 @@ module.exports = function ( grunt ) {
 					( file ) =>
 						file.includes( 'patch' ) || file.includes( 'diff' )
 				);
-			grunt.log.debug( 'files: ' + JSON.stringify( files ) );
+			log.debug( 'files: ' + JSON.stringify( files ) );
 
 			if ( 0 === files.length ) {
 				fileFail( done );
@@ -360,8 +351,8 @@ module.exports = function ( grunt ) {
 				ticket = ticket + ':' + afterProtocal;
 			}
 
-			grunt.log.debug( 'ticket: ' + ticket );
-			grunt.log.debug( 'options: ' + JSON.stringify( options ) );
+			log.debug( 'ticket: ' + ticket );
+			log.debug( 'options: ' + JSON.stringify( options ) );
 
 			if ( 'undefined' === typeof ticket ) {
 				// look for diffs and patches in the root of the checkout and
@@ -387,8 +378,8 @@ module.exports = function ( grunt ) {
 			const done = this.async();
 			const options = this.options( defaults );
 
-			grunt.log.debug( 'ticketNumber: ' + ticketNumber );
-			grunt.log.debug( 'options: ' + JSON.stringify( options ) );
+			log.debug( 'ticketNumber: ' + ticketNumber );
+			log.debug( 'options: ' + JSON.stringify( options ) );
 
 			ticketNumber = parseInt( ticketNumber, 10 );
 			if ( 'number' !== typeof ticketNumber ) {
@@ -435,7 +426,7 @@ module.exports = function ( grunt ) {
 							}
 
 							if ( null === err ) {
-								grunt.log.writeln( 'Uploaded patch.' );
+								log.notice( 'Uploaded patch.' );
 								done();
 							} else {
 								grunt.fail.warn(
