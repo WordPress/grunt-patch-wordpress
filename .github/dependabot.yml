@@ -1,10 +1,34 @@
 version: 2
 
 updates:
-- directory: /
-  ignore:
-  - dependency-name: "github/gh-aw-actions/**" # Managed by gh aw compile. Version-locked to the gh-aw compiler; do not bump.
-  open-pull-requests-limit: 10
-  package-ecosystem: github-actions
-  schedule:
-    interval: weekly
+  # Configure Dependabot updates for GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 20
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "github/gh-aw-actions/**" # Managed by gh aw compile. Version-locked to the gh-aw compiler; do not bump.
+    groups:
+      github-actions:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
+
+  # Configure Dependabot updates for npm
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 20
+    cooldown:
+      default-days: 7
+    groups:
+      npm-packages:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
