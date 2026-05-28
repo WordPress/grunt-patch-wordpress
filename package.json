@@ -47,7 +47,7 @@
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^30.10.0",
-		"concurrently": "^8.2.2"
+		"concurrently": "^9.2.1"
 	},
 	"scripts": {
 		"check-engines": "wp-scripts check-engines",
