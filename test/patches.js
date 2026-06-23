@@ -22,6 +22,7 @@ const testsSvn = grunt.file.read( 'test/fixtures/tests.develop.svn.diff' );
 const testsGit = grunt.file.read( 'test/fixtures/tests.develop.git.diff' );
 const abyes = grunt.file.read( 'test/fixtures/git.diff.ab.diff' );
 const coreTrunkSvn = grunt.file.read( 'test/fixtures/core.svn.trunk.diff' );
+const dotGithubGit = grunt.file.read( 'test/fixtures/dot-github.git.diff' );
 
 describe( 'Patch helpers', () => {
 	it( 'git a/b diffs should not automatticaly trigger moving to src', () => {
@@ -41,6 +42,10 @@ describe( 'Patch helpers', () => {
 	it( 'dev.svn diffs should always be applied in the root of the checkout', () => {
 		expect( patch.moveToSrc( developSvn ) ).not.toBe( true );
 		expect( patch.moveToSrc( developIndexSvn ) ).not.toBe( true );
+	} );
+
+	it( '.github diffs should always be applied in the root of the checkout', () => {
+		expect( patch.moveToSrc( dotGithubGit ) ).not.toBe( true );
 	} );
 
 	it( 'core.git.wordpress.org diffs should always be applied in the svn folder', () => {
