@@ -168,7 +168,7 @@ module.exports = function ( grunt ) {
 			// We've failed in our mission
 		} else {
 			grunt.event.emit(
-				'fileFile',
+				'fileFail',
 				'All matching failed.  Please enter a ticket url, ticket number, patch url'
 			);
 		}
