@@ -8,7 +8,6 @@
  * Licensed under the MIT license.
  */
 
-const request = require( 'request' );
 const exec = require( 'child_process' ).exec;
 const execSync = require( 'child_process' ).execSync;
 const spawn = require( 'child_process' ).spawn;
@@ -16,6 +15,7 @@ const inquirer = require( 'inquirer' );
 const url = require( 'url' );
 const fs = require( 'fs' );
 const trac = require( '../lib/trac.js' );
+const tracBrowser = require( '../lib/trac-browser.js' );
 const patch = require( '../lib/patch.js' );
 const regex = require( '../lib/regex.js' );
 const xmlrpc = require( 'xmlrpc' );
@@ -33,6 +33,33 @@ module.exports = function ( grunt ) {
 
 	function workingDir() {
 		return process.cwd();
+	}
+
+	/**
+	 * Download a URL as text.
+	 *
+	 * Trac hosts are fetched through the headless browser so the bot-protection
+	 * challenge is passed; anything else (GitHub, for example) is a plain fetch.
+	 *
+	 * @param {string} fileUrl URL to download.
+	 * @param {Object} options Task options.
+	 * @return {Promise<{status: number, body: string}>} Status and body text.
+	 */
+	function download( fileUrl, options ) {
+		if ( url.parse( fileUrl ).hostname === options.tracUrl ) {
+			return tracBrowser.fetch( fileUrl );
+		}
+
+		return fetch( fileUrl, {
+			headers: {
+				'User-Agent':
+					'grunt-patch-wordpress; https://github.com/WordPress/grunt-patch-wordpress',
+			},
+		} ).then( ( response ) =>
+			response
+				.text()
+				.then( ( body ) => ( { status: response.status, body } ) )
+		);
 	}
 
 	function applyPatch( patchUrl, done, options ) {
@@ -85,7 +112,7 @@ module.exports = function ( grunt ) {
 					grunt.file.delete( tempFile );
 				}
 
-				done( code );
+				tracBrowser.close().then( () => done( code ) );
 			} );
 		} );
 
@@ -95,7 +122,7 @@ module.exports = function ( grunt ) {
 				grunt.log.errorlns( msg );
 			}
 
-			done( false );
+			tracBrowser.close().then( () => done( false ) );
 		} );
 
 		// if patchUrl is a github url
@@ -118,7 +145,7 @@ module.exports = function ( grunt ) {
 			parsedUrl.pathname.match( /attachment/ ) &&
 			parsedUrl.pathname.match( /(patch|diff)/ )
 		) {
-			getPatch( trac.convertToRaw( parsedUrl, options ) );
+			getPatch( trac.convertToRaw( parsedUrl, options ), options );
 
 			// if patchUrl is just a ticket number, get a list of patches on that ticket and allow user to choose one
 		} else if (
@@ -167,15 +194,8 @@ module.exports = function ( grunt ) {
 
 		grunt.log.debug( 'getPatchFromTicket: ' + patchUrl );
 
-		const requestOptions = {
-			url: patchUrl,
-			headers: {
-				'User-Agent':
-					'grunt-patch-wordpress; https://github.com/WordPress/grunt-patch-wordpress',
-			},
-		};
-		request( requestOptions, ( error, response, body ) => {
-			if ( ! error && 200 === response.statusCode ) {
+		download( patchUrl, options ).then( ( { status, body } ) => {
+			if ( 200 === status ) {
 				matches = regex.patchAttachments( body );
 				grunt.log.debug( 'matches: ' + JSON.stringify( matches ) );
 
@@ -239,12 +259,14 @@ module.exports = function ( grunt ) {
 				// something went wrong
 				grunt.event.emit(
 					'fileFail',
-					'getPatchFromTicket fail \n status: ' + response.statusCode
+					'getPatchFromTicket fail \n status: ' + status
 				);
 			}
-		} );
+		}, downloadFailed );
+	}
 
-		grunt.event.emit( 'fileFile', 'method not available yet' );
+	function downloadFailed( error ) {
+		grunt.event.emit( 'fileFail', error.message );
 	}
 
 	function getLocalPatch( patchUrl ) {
@@ -256,31 +278,27 @@ module.exports = function ( grunt ) {
 		grunt.event.emit( 'fileReady', level, moveToSrc );
 	}
 
-	function getPatch( patchUrl ) {
+	function getPatch( patchUrl, options ) {
 		grunt.log.debug( 'getting patch: ' + patchUrl );
 
-		const requestOptions = {
-			url: patchUrl,
-			headers: {
-				'User-Agent':
-					'grunt-patch-wordpress; https://github.com/WordPress/grunt-patch-wordpress',
-			},
-		};
-		request( requestOptions, ( error, response, body ) => {
-			if ( ! error && 200 === response.statusCode ) {
-				const level = patch.isAb( body ) ? 1 : 0;
-				const moveToSrc = patch.moveToSrc( body );
+		download( patchUrl, options || defaults ).then(
+			( { status, body } ) => {
+				if ( 200 === status ) {
+					const level = patch.isAb( body ) ? 1 : 0;
+					const moveToSrc = patch.moveToSrc( body );
 
-				grunt.file.write( tempFile, body );
-				grunt.event.emit( 'fileReady', level, moveToSrc );
-			} else {
-				// something went wrong
-				grunt.event.emit(
-					'fileFail',
-					'getPatch_fail \n status: ' + response.statusCode
-				);
-			}
-		} );
+					grunt.file.write( tempFile, body );
+					grunt.event.emit( 'fileReady', level, moveToSrc );
+				} else {
+					// something went wrong
+					grunt.event.emit(
+						'fileFail',
+						'getPatch_fail \n status: ' + status
+					);
+				}
+			},
+			downloadFailed
+		);
 	}
 
 	function fileFail( done, msg ) {
