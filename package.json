@@ -1,6 +1,6 @@
 {
 	"name": "grunt-patch-wordpress",
-	"version": "4.0.0",
+	"version": "4.1.0",
 	"description": "Patch your core WordPress.",
 	"author": "The WordPress Contributors",
 	"license": "MIT",
@@ -42,12 +42,20 @@
 	"dependencies": {
 		"grunt": "^1.0.3",
 		"inquirer": "^5.1.0",
-		"request": "^2.83.0",
 		"xmlrpc": "^1.3.2"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^30.10.0",
-		"concurrently": "^9.2.1"
+		"concurrently": "^9.2.1",
+		"playwright": "^1.61.1"
+	},
+	"peerDependencies": {
+		"playwright": ">=1.40.0"
+	},
+	"peerDependenciesMeta": {
+		"playwright": {
+			"optional": true
+		}
 	},
 	"scripts": {
 		"check-engines": "wp-scripts check-engines",

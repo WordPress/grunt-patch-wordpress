@@ -25,6 +25,17 @@ patch_wordpress{
 }
 ```
 
+## Reading from Trac
+
+WordPress.org's Trac instances answer non-browser clients with a JavaScript bot-protection challenge (HTTP 403), so the `patch` and `ticket` tasks fetch from Trac through a headless Chromium driven by [Playwright](https://playwright.dev/). Playwright is an optional peer dependency; install it once in your project:
+
+```shell
+  npm install --save-dev playwright
+  npx playwright install chromium
+```
+
+`wordpress-develop` already ships Playwright, so there only the `npx playwright install chromium` step is needed. Both tasks explain what to run if either piece is missing. The browser profile, and with it the challenge cookie, is kept in `~/.cache/grunt-patch-wordpress`. Uploading a patch does not use the browser.
+
 ## Apply a patch from the command line
 
 1. Have a diff or a patch file in your working Directory, then run ```grunt patch```.
@@ -41,6 +52,18 @@ If multiple files are found, you'll be asked which one to apply.
 
 5. Enter a github url that points to a changeset such as a Pull Request, e.g.
   * `grunt patch:https://github.com/aaronjorbin/develop.wordpress/pull/23`
+
+## Read a ticket from the command line
+
+Print a ticket's summary, properties, description, attachments (with raw download URLs), linked pull requests, and full change history:
+
+```bash
+grunt ticket:15705
+grunt ticket:https://core.trac.wordpress.org/ticket/15705
+grunt ticket:15705 --json
+```
+
+Ticket URLs may point at any Trac host, e.g. `grunt ticket:https://meta.trac.wordpress.org/ticket/8202`. Bare numbers use the configured `tracUrl`.
 
 ## Upload a patch from the command line
 
@@ -98,3 +121,4 @@ Please follow the [WordPress coding standards](https://make.wordpress.org/core/h
 - 3.0.0 - Bump minimum node version to [Node 12](https://github.com/WordPress/grunt-patch-wordpress/pull/89). [Update wp-scripts](https://github.com/WordPress/grunt-patch-wordpress/pull/87) and some general formatting. Use a [custom user agent for requests](https://github.com/WordPress/grunt-patch-wordpress/pull/85).
 - 3.0.1 - Add support for more github URL formats. Internal: Use Github Actions instead of Travis.
 - 4.0.0 - Bump minimum node version and some dependencies.
+- 4.1.0 - Fetch from Trac through a headless browser so `patch` works behind Trac's bot-protection challenge. Add the `ticket` task. Drop the `request` dependency; Playwright becomes an optional peer dependency.
